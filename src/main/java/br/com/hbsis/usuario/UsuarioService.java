@@ -88,6 +88,7 @@ public class UsuarioService {
 	}
 
 	public void delete(Long id) {
+
 		LOGGER.info("Executando delete para usuário de ID: [{}]", id);
 
 		this.iUsuarioRepository.deleteById(id);
