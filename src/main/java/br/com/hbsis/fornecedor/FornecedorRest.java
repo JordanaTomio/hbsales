@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/fornecedores")
 public class FornecedorRest {
-    private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(FornecedorRest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FornecedorRest.class);
 
     private final FornecedorService fornecedorService;
 
@@ -25,6 +25,7 @@ public class FornecedorRest {
 
         return this.fornecedorService.save(fornecedorDTO);
     }
+
     @GetMapping("/{id}")
     public FornecedorDTO find(@PathVariable("id") Long id) {
 
