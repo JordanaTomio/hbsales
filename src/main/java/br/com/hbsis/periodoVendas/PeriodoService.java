@@ -6,10 +6,13 @@ import br.com.hbsis.fornecedor.IFornecedorRepository;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -159,5 +162,6 @@ public class PeriodoService {
 
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
+
 
 }

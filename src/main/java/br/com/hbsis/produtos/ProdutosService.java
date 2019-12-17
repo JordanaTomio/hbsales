@@ -112,7 +112,6 @@ public class ProdutosService {
             throw new IllegalArgumentException("Linha de categoria não deve ser nula/vazia");
         }
 
-
         if (!(produtosDTO.getUnidadeMedida().contains("kg") || produtosDTO.getUnidadeMedida().contains("mg") || produtosDTO.getUnidadeMedida().contains("g"))) {
             throw new IllegalArgumentException("Unidade de medida inválida");
         }
@@ -339,6 +338,7 @@ public class ProdutosService {
                     linha_categoriaDTO.setCategoria(idCategoria);
                     linha_categoriaDTO.setNomeLinha(nomeLinha);
                     linha_categoriaService.save(linha_categoriaDTO);
+
                 } else {
                     Linha_categoriaDTO linha_categoriaDTO = new Linha_categoriaDTO();
                     linhaCompleta = iLinha_categoriaRepository.findByCodigoLinha(codigoLinha);

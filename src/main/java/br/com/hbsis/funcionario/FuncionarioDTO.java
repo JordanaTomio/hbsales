@@ -18,7 +18,7 @@ public class FuncionarioDTO {
                 funcionario.getId(),
                 funcionario.getNomeFuncionario(),
                 funcionario.getEmailFuncionario(),
-                funcionario.uuidFuncionario
+                funcionario.getUuidFuncionario()
         );
     }
 

@@ -3,13 +3,22 @@ package br.com.hbsis.Pedidos;
 import br.com.hbsis.fornecedor.Fornecedor;
 import br.com.hbsis.fornecedor.FornecedorService;
 import br.com.hbsis.fornecedor.IFornecedorRepository;
+import br.com.hbsis.funcionario.Funcionario;
+import br.com.hbsis.item.Item;
+import br.com.hbsis.item.invoiceItemDTOSet;
 import br.com.hbsis.periodoVendas.IPeriodoRepository;
 import br.com.hbsis.periodoVendas.Periodo;
 import br.com.hbsis.periodoVendas.PeriodoService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class PedidosService {
@@ -19,6 +28,7 @@ public class PedidosService {
     private final IPeriodoRepository iPeriodoRepository;
     private final FornecedorService fornecedorService;
     private final PeriodoService periodoService;
+
 
     public PedidosService(IPedidosRepository iPedidosRepository, IFornecedorRepository iFornecedorRepository, IPeriodoRepository iPeriodoRepository, FornecedorService fornecedorService, PeriodoService periodoService) {
         this.iPedidosRepository = iPedidosRepository;
@@ -44,6 +54,7 @@ public class PedidosService {
 
         fornecedorCompleto = fornecedorService.findByIdFornecedor(pedidosDTO.getIdFornecedor());
         periodoCompleto = periodoService.findByIdPeriodo(pedidosDTO.getIdPeriodo());
+        String cnpjFornecedor = fornecedorCompleto.getCnpj();
 
         pedidos.setFornecedor(fornecedorCompleto);
         pedidos.setPeriodo(periodoCompleto);
@@ -57,6 +68,7 @@ public class PedidosService {
     }
     private void validate(PedidosDTO pedidosDTO) {
         LOGGER.info("Validando pedido");
+        List<Item> itens;
 
         if (pedidosDTO == null) {
             throw new IllegalArgumentException("PedidoDTO não deve ser nulo");
@@ -74,9 +86,32 @@ public class PedidosService {
         if (StringUtils.isEmpty(String.valueOf(pedidosDTO.getIdPeriodo()))) {
             throw new IllegalArgumentException("Periodo de venda do pedido não deve ser nula/vazia");
         }
+
+        Fornecedor fornecedorCompleto = new Fornecedor();
+        fornecedorCompleto = fornecedorService.findByIdFornecedor(pedidosDTO.getIdFornecedor());
+        String cnpjFornecedor = fornecedorCompleto.getCnpj();
+
+        Funcionario funcionarioCompleto = new Funcionario();
+        Set<invoiceItemDTOSet> items;
+        PedidoSavingDTO pedidoSavingDTO = new PedidoSavingDTO();
+        Set<invoiceItemDTOSet> invoiceItem = pedidoSavingDTO.getInvoiceItemDTOSet();
+        //validação fornecedor --> produto
+        //validação periodo de vendas --> fornecedor
+
+        this.validateWithAPIInvoiceRest(cnpjFornecedor, funcionarioCompleto.getUuidFuncionario(), invoiceItem, pedidosDTO.getValorTotal());
     }
 
+    private void validateWithAPIInvoiceRest(String cnpjFornecedor, String employeeUuid, Set<invoiceItemDTOSet>invoiceItemDTOSet, double totalValue) {
+        RestTemplate template = new RestTemplate();
+        PedidoSavingDTO pedidoSavingDTO = new PedidoSavingDTO();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "//key");
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity httpEntity = new HttpEntity(pedidoSavingDTO, headers);
+        ResponseEntity<PedidoSavingDTO> response = template.exchange("http://nt-04053:9999/api/invoice", HttpMethod.POST, httpEntity, PedidoSavingDTO.class);
+    }
+    private void validandoFornecedor(Set<Item> itens, Fornecedor fornecedor){
 
-
-
+    }
 }
+

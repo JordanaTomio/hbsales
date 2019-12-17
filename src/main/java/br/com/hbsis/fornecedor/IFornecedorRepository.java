@@ -8,5 +8,5 @@ public interface IFornecedorRepository extends JpaRepository <Fornecedor, Long> 
 
     public Fornecedor findByCnpjAndRazao(String cnpj, String razao);
 
-
+    public Fornecedor findByCnpj(String cnpj);
 }

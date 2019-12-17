@@ -14,8 +14,9 @@ public class PedidosDTO {
     private Long idFornecedor;
     private Long idPeriodo;
     private List<Produtos> produtos;
+    private double valorTotal;
 
-    public PedidosDTO(Long id, String codigo, StatusName status, LocalDate dataCriacao, Long idFornecedor, Long idPeriodo, List<Produtos> produtos) {
+    public PedidosDTO(Long id, String codigo, StatusName status, LocalDate dataCriacao, Long idFornecedor, Long idPeriodo, List<Produtos> produtos, double valorTotal) {
         this.id = id;
         this.codigo = codigo;
         this.status = status;
@@ -23,6 +24,7 @@ public class PedidosDTO {
         this.idFornecedor = idFornecedor;
         this.idPeriodo = idPeriodo;
         this.produtos = produtos;
+        this.valorTotal = valorTotal;
     }
 
     public static PedidosDTO of(Pedidos pedidos) {
@@ -33,7 +35,8 @@ public class PedidosDTO {
                 pedidos.getDataCriacao(),
                 pedidos.getFornecedor().getId(),
                 pedidos.getPeriodo().getId(),
-                pedidos.getProdutos()
+                pedidos.getProdutos(),
+                pedidos.getValorTotal()
         );
     }
 
@@ -93,6 +96,14 @@ public class PedidosDTO {
         this.produtos = produtos;
     }
 
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
     @Override
     public String toString() {
         return "PedidosDTO{" +
@@ -103,6 +114,7 @@ public class PedidosDTO {
                 ", idFornecedor=" + idFornecedor +
                 ", idPeriodo=" + idPeriodo +
                 ", produtos=" + produtos +
+                ", valorTotal=" + valorTotal +
                 '}';
     }
 }

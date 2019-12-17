@@ -36,6 +36,9 @@ public class Pedidos {
     @JoinColumn(name = "id_periodo", referencedColumnName = "id")
     private Periodo periodo;
 
+    @Column(name = "valor_total", nullable = false)
+    private double valorTotal;
+
     public Long getId() {
         return id;
     }
@@ -90,5 +93,27 @@ public class Pedidos {
 
     public void setPeriodo(Periodo periodo) {
         this.periodo = periodo;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    @Override
+    public String toString() {
+        return "Pedidos{" +
+                "id=" + id +
+                ", codigo='" + codigo + '\'' +
+                ", status=" + status +
+                ", dataCriacao=" + dataCriacao +
+                ", fornecedor=" + fornecedor +
+                ", produtos=" + produtos +
+                ", periodo=" + periodo +
+                ", valorTotal=" + valorTotal +
+                '}';
     }
 }
