@@ -29,11 +29,11 @@ public class UsuarioRest {
 	}
 
 	@GetMapping("/{id}")
-	public UsuarioDTO find(@PathVariable("id") Long id) {
+		public UsuarioDTO find(@PathVariable("id") Long id) {
 
-		LOGGER.info("Recebendo find by ID... id: [{}]", id);
+			LOGGER.info("Recebendo find by ID... id: [{}]", id);
 
-		return this.usuarioService.findById(id);
+			return this.usuarioService.findById(id);
 	}
 
 	@PutMapping("/{id}")
