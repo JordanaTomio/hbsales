@@ -9,8 +9,7 @@ public class FornecedorDTO {
     private String telefone;
     private String email;
 
-    public FornecedorDTO(){
-    }
+
 
     public FornecedorDTO(Long id, String razao, String cnpj, String nomefantasia, String endereco, String telefone, String email) {
         this.id = id;
@@ -20,6 +19,10 @@ public class FornecedorDTO {
         this.endereco = endereco;
         this.telefone = telefone;
         this.email = email;
+    }
+
+    public FornecedorDTO() {
+
     }
 
     public static FornecedorDTO of(Fornecedor fornecedor) {

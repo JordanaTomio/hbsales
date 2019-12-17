@@ -11,15 +11,15 @@ public class Fornecedor {
     private Long id;
     @Column(name = "razao", unique = true, nullable = false, length = 100)
     private String razao;
-    @Column(name = "cnpj", unique = true, nullable = false, length = 11)
+    @Column(name = "cnpj", unique = true, nullable = false, length = 14)
     private String cnpj;
     @Column(name = "nomefantasia", nullable = false, length = 100)
     private String nomefantasia;
     @Column(name = "endereco", nullable = false, length = 100)
     private String endereco;
-    @Column(name = "telefone", nullable = false, length = 11)
+    @Column(name = "telefone", nullable = false, length = 12)
     private String telefone;
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(name = "email", nullable = false, length = 50)
     private String email;
 
     public Long getId() {
