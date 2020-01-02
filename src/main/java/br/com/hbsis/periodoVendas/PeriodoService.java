@@ -2,17 +2,12 @@ package br.com.hbsis.periodoVendas;
 
 import br.com.hbsis.fornecedor.Fornecedor;
 import br.com.hbsis.fornecedor.FornecedorService;
-import br.com.hbsis.fornecedor.IFornecedorRepository;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,12 +16,10 @@ public class PeriodoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PeriodoService.class);
 
-    private final IFornecedorRepository iFornecedorRepository;
     private final FornecedorService fornecedorService;
     private final IPeriodoRepository iPeriodoRepository;
 
-    public PeriodoService(IFornecedorRepository iFornecedorRepository, FornecedorService fornecedorService, IPeriodoRepository iPeriodoRepository) {
-        this.iFornecedorRepository = iFornecedorRepository;
+    public PeriodoService(FornecedorService fornecedorService, IPeriodoRepository iPeriodoRepository) {
         this.fornecedorService = fornecedorService;
         this.iPeriodoRepository = iPeriodoRepository;
     }
@@ -162,6 +155,16 @@ public class PeriodoService {
 
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
+    public Periodo findByIdFornecedor(Long id) {
+        Optional<Periodo> periodoOptional = this.iPeriodoRepository.findByFornecedor(id);
 
+        if (periodoOptional.isPresent()) {
+            return periodoOptional.get();
+        }
+        throw new IllegalArgumentException(String.format("nao existe periodo desse fornecedor não existe", id));
+    }
 
+    public boolean existsByIdFornecedor(Long id){
+        return iPeriodoRepository.existsByFornecedor(id);
+    }
 }

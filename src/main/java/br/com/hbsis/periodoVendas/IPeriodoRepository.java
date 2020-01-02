@@ -2,5 +2,12 @@ package br.com.hbsis.periodoVendas;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface IPeriodoRepository extends JpaRepository<Periodo, Long> {
+import java.util.Optional;
+
+interface IPeriodoRepository extends JpaRepository<Periodo, Long> {
+    
+
+    boolean existsByFornecedor(Long id);
+
+    Optional<Periodo> findByFornecedor(Long id);
 }

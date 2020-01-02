@@ -1,15 +1,11 @@
 package br.com.hbsis.fornecedor;
 
+import br.com.hbsis.categoria.AlterarCodigo;
 import com.microsoft.sqlserver.jdbc.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -17,12 +13,11 @@ public class FornecedorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FornecedorService.class);
 
     private final IFornecedorRepository iFornecedorRepository;
+    private final AlterarCodigo alterarCodigo;
 
-
-    @Autowired
-    public FornecedorService(IFornecedorRepository iFornecedorRepository) {
-
+    public FornecedorService(IFornecedorRepository iFornecedorRepository, AlterarCodigo alterarCodigo) {
         this.iFornecedorRepository = iFornecedorRepository;
+        this.alterarCodigo = alterarCodigo;
     }
 
 
@@ -99,7 +94,11 @@ public class FornecedorService {
 
             fornecedorExistente.setCnpj(fornecedorDTO.getCnpj());
             fornecedorExistente.setNomefantasia(fornecedorDTO.getNomefantasia());
-
+            fornecedorExistente.setTelefone(fornecedorDTO.getTelefone());
+            fornecedorExistente.setRazao(fornecedorDTO.getRazao());
+            fornecedorExistente.setEmail(fornecedorDTO.getEmail());
+            fornecedorExistente.setEndereco(fornecedorDTO.getEndereco());
+            alterarCodigo.alteraCategoria(fornecedorExistente);
             fornecedorExistente = this.iFornecedorRepository.save(fornecedorExistente);
 
             return FornecedorDTO.of(fornecedorExistente);
@@ -117,5 +116,12 @@ public class FornecedorService {
         this.iFornecedorRepository.deleteById(id);
     }
 
-
+    public Fornecedor findFornecedor(String cnpj, String razao){
+        iFornecedorRepository.findByCnpjAndRazao(cnpj, razao);
+        return iFornecedorRepository.findByCnpjAndRazao(cnpj, razao);
+    }
+    public boolean existsByIdFornecedor(Long id){
+        iFornecedorRepository.existsById(id);
+        return iFornecedorRepository.existsById(id);
+    }
 }

@@ -51,21 +51,22 @@ public class FuncionarioService {
         if (StringUtils.isEmpty(funcionarioDTO.getEmail())) {
             throw new IllegalArgumentException("Email não deve ser nulo/vazio");
         }
-        if (StringUtils.isEmpty(funcionarioDTO.getUuid())) {
-            throw new IllegalArgumentException("Uuid não deve ser nulo/vazio");
-        }
 
-        this.validateWithAPIHBEmployee(funcionarioDTO);
+        this.validaAPI(funcionarioDTO);
     }
 
-    private void validateWithAPIHBEmployee(FuncionarioDTO funcionarioDTO) {
+    private void validaAPI(FuncionarioDTO funcionarioDTO) {
         RestTemplate template = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "//key");
+        headers.add("Authorization", "f5a00032-1b67-11ea-978f-2e728ce88125");
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity httpEntity = new HttpEntity(funcionarioDTO, headers);
-        ResponseEntity<EmployeeSavingDTO> response = template.exchange("http://nt-04053:9999/api/employees", HttpMethod.POST, httpEntity, EmployeeSavingDTO.class);
+        ResponseEntity<EmployeeDTO> response = template.exchange("http://10.2.54.25:9999/api/employees", HttpMethod.POST, httpEntity, EmployeeDTO.class);
         funcionarioDTO.setUuid(Objects.requireNonNull(response.getBody()).getEmployeeUuid());
         funcionarioDTO.setNome(response.getBody().getEmployeeName());
     }
+    public Funcionario findByIdFuncionario(Long id){
+        return this.iFuncionarioRepository.findById(id).get();
+    }
+
 }

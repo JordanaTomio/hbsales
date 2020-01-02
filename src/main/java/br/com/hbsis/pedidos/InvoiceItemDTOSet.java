@@ -1,12 +1,17 @@
-package br.com.hbsis.item;
+package br.com.hbsis.pedidos;
 
-public class invoiceItemDTOSet {
+
+public class InvoiceItemDTOSet {
     private int amount;
     private String itemName;
 
-    public invoiceItemDTOSet(int amount, String itemName) {
+    public InvoiceItemDTOSet(int amount, String itemName) {
         this.amount = amount;
         this.itemName = itemName;
+    }
+
+    public InvoiceItemDTOSet() {
+
     }
 
     public int getAmount() {

@@ -3,6 +3,7 @@ package br.com.hbsis.produtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
@@ -36,10 +37,10 @@ public class ProdutosRest {
 
     }
     @PostMapping("/import-fornecedor/{id}")
-    public void importFornecedor(@PathVariable("id") Long id) throws Exception {
+    public void importFornecedor(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de importação por Fornecedor...");
 
-        this.produtosService.ImportFornecedor(id);
+        this.produtosService.importFornecedor(id, file);
 
         LOGGER.info("Importado com sucesso...");
 

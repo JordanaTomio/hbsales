@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -43,10 +44,10 @@ public class CategoriaRest {
 
 
     @PostMapping("/import-csv")
-    public void importCSV() throws Exception {
+    public void importCSV(@RequestParam("file") MultipartFile file) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de importação...");
 
-        this.categoriaService.Import();
+        this.categoriaService.Import(file);
 
         LOGGER.info("Importado com sucesso...");
 

@@ -1,24 +1,26 @@
-package br.com.hbsis.Pedidos;
+package br.com.hbsis.pedidos;
 
-import br.com.hbsis.item.invoiceItemDTOSet;
 
-import java.util.List;
 import java.util.Set;
 
-public class PedidoSavingDTO {
+public class InvoiceDTO {
         private String cnpjFornecedor;
         private String employeeUuid;
-        private Set<br.com.hbsis.item.invoiceItemDTOSet> invoiceItemDTOSet;
+        private Set<InvoiceItemDTOSet> invoiceItemDTOSet;
         private double totalValue;
 
-    public PedidoSavingDTO(String cnpjFornecedor, String employeeUuid, Set<br.com.hbsis.item.invoiceItemDTOSet> invoiceItemDTOSet, double totalValue) {
+
+    public InvoiceDTO(String cnpjFornecedor, String employeeUuid, Set<InvoiceItemDTOSet> invoiceItemDTOSet, double totalValue, PedidosService pedidosService) {
         this.cnpjFornecedor = cnpjFornecedor;
         this.employeeUuid = employeeUuid;
         this.invoiceItemDTOSet = invoiceItemDTOSet;
         this.totalValue = totalValue;
     }
 
-    public PedidoSavingDTO() {
+    public InvoiceDTO(String cnpjFornecedor, String employeeUuid, Set<InvoiceItemDTOSet> toList, double totalValue) {
+    }
+
+    public InvoiceDTO() {
 
     }
 
@@ -38,11 +40,11 @@ public class PedidoSavingDTO {
         this.employeeUuid = employeeUuid;
     }
 
-    public Set<br.com.hbsis.item.invoiceItemDTOSet> getInvoiceItemDTOSet() {
+    public Set<InvoiceItemDTOSet> getInvoiceItemDTOSet() {
         return invoiceItemDTOSet;
     }
 
-    public void setInvoiceItemDTOSet(Set<br.com.hbsis.item.invoiceItemDTOSet> invoiceItemDTOSet) {
+    public void setInvoiceItemDTOSet(Set<InvoiceItemDTOSet> invoiceItemDTOSet) {
         this.invoiceItemDTOSet = invoiceItemDTOSet;
     }
 
@@ -53,4 +55,6 @@ public class PedidoSavingDTO {
     public void setTotalValue(double totalValue) {
         this.totalValue = totalValue;
     }
+
+
 }

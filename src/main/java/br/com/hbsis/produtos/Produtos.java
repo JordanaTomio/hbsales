@@ -1,11 +1,9 @@
 package br.com.hbsis.produtos;
 
 //iniciado 2:05
-import br.com.hbsis.linha_categoria.Linha_categoria;
+import br.com.hbsis.linhaCategoria.LinhaCategoria;
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "seg_produtos")
@@ -30,8 +28,8 @@ public class Produtos {
 
 
    @ManyToOne
-   @JoinColumn(name = "id_categoria", referencedColumnName = "id")
-   private Linha_categoria linha;
+    @JoinColumn(name = "id_categoria", referencedColumnName = "id")
+    private LinhaCategoria linha;
 
     public Long getId() {
         return id;
@@ -97,11 +95,11 @@ public class Produtos {
         this.unidadeMedida = unidadeMedida;
     }
 
-    public Linha_categoria getLinha() {
+    public LinhaCategoria getLinha() {
         return linha;
     }
 
-    public void setLinha(Linha_categoria linha) {
+    public void setLinha(LinhaCategoria linha) {
         this.linha = linha;
     }
 

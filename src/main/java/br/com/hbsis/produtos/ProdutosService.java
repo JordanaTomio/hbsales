@@ -3,14 +3,11 @@ package br.com.hbsis.produtos;
 import br.com.hbsis.categoria.Categoria;
 import br.com.hbsis.categoria.CategoriaDTO;
 import br.com.hbsis.categoria.CategoriaService;
-import br.com.hbsis.categoria.ICategoriaRepository;
 import br.com.hbsis.fornecedor.Fornecedor;
 import br.com.hbsis.fornecedor.FornecedorService;
-import br.com.hbsis.fornecedor.IFornecedorRepository;
-import br.com.hbsis.linha_categoria.ILinha_categoriaRepository;
-import br.com.hbsis.linha_categoria.Linha_categoria;
-import br.com.hbsis.linha_categoria.Linha_categoriaDTO;
-import br.com.hbsis.linha_categoria.Linha_categoriaService;
+import br.com.hbsis.linhaCategoria.LinhaCategoria;
+import br.com.hbsis.linhaCategoria.LinhaCategoriaDTO;
+import br.com.hbsis.linhaCategoria.LinhaCategoriaService;
 import com.google.common.net.HttpHeaders;
 import com.opencsv.CSVWriter;
 import com.opencsv.CSVWriterBuilder;
@@ -19,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.MaskFormatter;
@@ -34,28 +32,17 @@ public class ProdutosService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProdutosService.class);
 
     private final IProdutosRepository iProdutosRepository;
-
-    private final Linha_categoriaService linha_categoriaService;
-
-    private final IFornecedorRepository iFornecedorRepository;
-
+    private final LinhaCategoriaService linhaCategoriaService;
     private final FornecedorService fornecedorService;
-
-    private final ILinha_categoriaRepository iLinha_categoriaRepository;
-
-    private final ICategoriaRepository iCategoriaRepository;
-
     private final CategoriaService categoriaService;
 
-    public ProdutosService(IProdutosRepository iProdutosRepository, Linha_categoriaService linha_categoriaService, IFornecedorRepository iFornecedorRepository, FornecedorService fornecedorService, ILinha_categoriaRepository iLinha_categoriaRepository, ICategoriaRepository iCategoriaRepository, CategoriaService categoriaService) {
+    public ProdutosService(IProdutosRepository iProdutosRepository, LinhaCategoriaService linhaCategoriaService, FornecedorService fornecedorService, CategoriaService categoriaService) {
         this.iProdutosRepository = iProdutosRepository;
-        this.linha_categoriaService = linha_categoriaService;
-        this.iFornecedorRepository = iFornecedorRepository;
+        this.linhaCategoriaService = linhaCategoriaService;
         this.fornecedorService = fornecedorService;
-        this.iLinha_categoriaRepository = iLinha_categoriaRepository;
-        this.iCategoriaRepository = iCategoriaRepository;
         this.categoriaService = categoriaService;
     }
+
 
     public ProdutosDTO save(ProdutosDTO produtosDTO) throws ParseException {
 
@@ -64,12 +51,12 @@ public class ProdutosService {
         LOGGER.info("Salvando produto");
         LOGGER.debug("Produto: {}", produtosDTO);
 
+        LinhaCategoria linhaCompleta = new LinhaCategoria();
 
         Produtos produtos = new Produtos();
         produtos.setId(produtosDTO.getId());
         produtos.setNome(produtosDTO.getNome());
         produtos.setPesoUnidade(produtosDTO.getPesoUnidade());
-
         produtos.setUnidadeCaixa(produtosDTO.getUnidadeCaixa());
         produtos.setValidade(produtosDTO.getValidade());
         produtos.setUnidadeMedida(produtosDTO.getUnidadeMedida());
@@ -83,14 +70,13 @@ public class ProdutosService {
         String codigoZero;
         String codigo;
 
-
         String x = produtosDTO.getCodigo();
         codigoZero = StringUtils.leftPad(x, 10, "0");
         codigo = codigoZero.toUpperCase();
         produtos.setCodigo(codigo);
 
-        Linha_categoria linhaCompleta = new Linha_categoria();
-        linhaCompleta = linha_categoriaService.findByIdLinha(produtosDTO.getIdLinha());
+
+        linhaCompleta = linhaCategoriaService.findByIdLinha(produtosDTO.getIdLinha());
         produtos.setLinha(linhaCompleta);
 
         produtos = this.iProdutosRepository.save(produtos);
@@ -135,8 +121,8 @@ public class ProdutosService {
             produtoExistente.setCodigo(produtosDTO.getCodigo());
             produtoExistente.setUnidadeMedida(produtosDTO.getUnidadeMedida());
 
-            Linha_categoria linhaCompleta = new Linha_categoria();
-            linhaCompleta = linha_categoriaService.findByIdLinha(produtosDTO.getIdLinha());
+            LinhaCategoria linhaCompleta = new LinhaCategoria();
+            linhaCompleta = linhaCategoriaService.findByIdLinha(produtosDTO.getIdLinha());
             produtoExistente.setLinha(linhaCompleta);
 
             produtoExistente = this.iProdutosRepository.save(produtoExistente);
@@ -228,30 +214,27 @@ public class ProdutosService {
             String[] categoria = line.split(splitBy);
             String peso = categoria[5].replaceAll("[^0-9.]", "");
             String medida = categoria[5].replaceAll("[0-9]", "");
-
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String dateString = categoria[6];
             LocalDate validade = LocalDate.parse(dateString, dateTimeFormatter);
-
             String preco = categoria[3];
             String precoForm = preco.substring(3);
             String precoFormatado = precoForm.replaceAll(",", ".");
+            String codigo = categoria[7];
 
             ProdutosDTO produtosDTO = new ProdutosDTO();
             produtosDTO.setId(Long.parseLong(categoria[0]));
             produtosDTO.setNome(categoria[1]);
-
             produtosDTO.setPreco(Float.parseFloat(precoFormatado));
             produtosDTO.setUnidadeCaixa(Integer.parseInt(categoria[4]));
             produtosDTO.setPesoUnidade(Float.parseFloat(peso));
             produtosDTO.setValidade(validade);
-
             produtosDTO.setUnidadeMedida(medida);
-            String codigo = categoria[7];
-            String nomeCat = categoria[8];
-            Linha_categoria linhaCompleta = new Linha_categoria();
-            linhaCompleta = iLinha_categoriaRepository.findByCodigoLinha(codigo);
+
+            LinhaCategoria linhaCompleta = new LinhaCategoria();
+            linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codigo);
             Long idLinha = linhaCompleta.getId();
+
             produtosDTO.setIdLinha(idLinha);
             produtosDTO.setCodigo(categoria[2]);
 
@@ -259,29 +242,27 @@ public class ProdutosService {
         }
     }
 
-    public Optional <Produtos> findByIdProduto(Long id) {
+    public Produtos findByIdProduto(Long id) {
         Optional<Produtos> produtosOptional = this.iProdutosRepository.findById(id);
 
         if (produtosOptional.isPresent()) {
-            return produtosOptional;
+            return produtosOptional.get();
         }
 
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
+    public void importFornecedor(Long id, MultipartFile file) throws IOException, ParseException {
 
-    public void ImportFornecedor(Long id) throws IOException, ParseException {
-        ProdutosDTO produtoDTO = new ProdutosDTO();
-        String arquivo = "C:\\Users\\jordana.tomio\\Desktop\\exportandoProdutos3";
-        BufferedReader reader = new BufferedReader(new FileReader(arquivo));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
 
-        if (iFornecedorRepository.existsById(id)) {
+        if (fornecedorService.existsByIdFornecedor(id)) {
             reader.readLine();
             String line = " ";
             String splitBy = ";";
 
             while ((line = reader.readLine()) != null) {
-                Linha_categoria linhaCompleta = new Linha_categoria();
+                LinhaCategoria linhaCompleta = new LinhaCategoria();
                 Categoria categoriaCompleta = new Categoria();
                 Fornecedor fornecedorCompleto = new Fornecedor();
 
@@ -312,13 +293,13 @@ public class ProdutosService {
                 String codigoCategoria = categoria[9];
                 String nomeCategoria = categoria[10];
 
-                if (!iCategoriaRepository.existsByCodigo(codigoCategoria)) {
+                if (!categoriaService.existsByIdCodigo(codigoCategoria)) {
                     CategoriaDTO categoriaDTO = new CategoriaDTO();
                     LOGGER.info("Categoria não existente, criando nova...");
 
                     String cnpjFornecedor = categoria[11].replaceAll("[^0-9]", "");
                     String razaoFornecedor = categoria[12];
-                    fornecedorCompleto = iFornecedorRepository.findByCnpjAndRazao(cnpjFornecedor, razaoFornecedor);
+                    fornecedorCompleto = fornecedorService.findFornecedor(cnpjFornecedor, razaoFornecedor);
                     Long idFornecedor = fornecedorCompleto.getId();
 
                     categoriaDTO.setCodigo(codigoCategoria);
@@ -327,30 +308,30 @@ public class ProdutosService {
                     categoriaService.save(categoriaDTO);
                 }
 
-                if (!iLinha_categoriaRepository.existsByCodigoLinha(codigoLinha)) {
-                    Linha_categoriaDTO linha_categoriaDTO = new Linha_categoriaDTO();
+                if (!linhaCategoriaService.existsByLinhaCodigo(codigoLinha)) {
+                    LinhaCategoriaDTO linha_categoriaDTO = new LinhaCategoriaDTO();
                     LOGGER.info("Linha de Categoria não existente, criando nova...");
 
-                    categoriaCompleta = iCategoriaRepository.findByNomeAndCodigo(nomeCategoria, codigoCategoria);
+                    categoriaCompleta = categoriaService.findCategoriaNomeECodigo(nomeCategoria, codigoCategoria);
                     Long idCategoria = categoriaCompleta.getId();
 
                     linha_categoriaDTO.setCodigoLinha(codigoLinha);
                     linha_categoriaDTO.setCategoria(idCategoria);
                     linha_categoriaDTO.setNomeLinha(nomeLinha);
-                    linha_categoriaService.save(linha_categoriaDTO);
+                    linhaCategoriaService.save(linha_categoriaDTO);
 
                 } else {
-                    Linha_categoriaDTO linha_categoriaDTO = new Linha_categoriaDTO();
-                    linhaCompleta = iLinha_categoriaRepository.findByCodigoLinha(codigoLinha);
+                    LinhaCategoriaDTO linha_categoriaDTO = new LinhaCategoriaDTO();
+                    linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codigoLinha);
                     Long idCategoria = linhaCompleta.getId();
                     String catego = linhaCompleta.getCodigoLinha();
 
                     linha_categoriaDTO.setCodigoLinha(codigoLinha);
                     linha_categoriaDTO.setCategoria(idCategoria);
                     linha_categoriaDTO.setNomeLinha(nomeLinha);
-                    linha_categoriaService.update(linha_categoriaDTO, idCategoria);
+                    linhaCategoriaService.update(linha_categoriaDTO, idCategoria);
                 }
-                linhaCompleta = iLinha_categoriaRepository.findByCodigoLinha(codigoLinha);
+                linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codigoLinha);
                 Long idLinha = linhaCompleta.getId();
                 produtosDTO.setIdLinha(idLinha);
 
@@ -364,5 +345,9 @@ public class ProdutosService {
 
             }
         }
+    }
+
+    public Produtos findProduto(Long id){
+        return findByIdProduto(id);
     }
 }

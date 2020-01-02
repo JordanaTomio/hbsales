@@ -3,9 +3,7 @@ package br.com.hbsis.categoria;
 import br.com.hbsis.fornecedor.Fornecedor;
 import br.com.hbsis.fornecedor.FornecedorDTO;
 import br.com.hbsis.fornecedor.FornecedorService;
-import br.com.hbsis.fornecedor.IFornecedorRepository;
 import com.google.common.net.HttpHeaders;
-import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.CSVWriterBuilder;
 import com.opencsv.ICSVWriter;
@@ -13,14 +11,11 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.MaskFormatter;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.*;
 
@@ -29,17 +24,14 @@ import java.util.*;
 public class CategoriaService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoriaService.class);
 
-    private final IFornecedorRepository iFornecedorRepository;
     private final FornecedorService fornecedorService;
     private final ICategoriaRepository iCategoriaRepository;
 
-
-    public CategoriaService(IFornecedorRepository iFornecedorRepository, FornecedorService fornecedorService, ICategoriaRepository iCategoriaRepository) {
-        this.iFornecedorRepository = iFornecedorRepository;
+    public CategoriaService(FornecedorService fornecedorService, ICategoriaRepository iCategoriaRepository) {
         this.fornecedorService = fornecedorService;
         this.iCategoriaRepository = iCategoriaRepository;
-
     }
+
 
     public CategoriaDTO save(CategoriaDTO categoriaDTO) {
 
@@ -52,7 +44,6 @@ public class CategoriaService {
 
         categoria.setId(categoriaDTO.getId());
         categoria.setNome(categoriaDTO.getNome());
-        categoria.setCodigo(categoriaDTO.getCodigo());
 
         Fornecedor fornecedorCompleto = new Fornecedor();
         fornecedorCompleto = fornecedorService.findByIdFornecedor(categoriaDTO.getIdFornecedor());
@@ -63,12 +54,10 @@ public class CategoriaService {
         int zero = categoriaDTO.getCodigo().length();
         String codigoZero;
 
-        if (zero < 3) {
-            String x = categoriaDTO.getCodigo();
-            codigoZero = StringUtils.leftPad(x, 3, "0");
-            String codigo = "CAT" + cnpjPronto + codigoZero;
-            categoria.setCodigo(codigo);
-        }
+        String x = categoriaDTO.getCodigo();
+        codigoZero = StringUtils.leftPad(x, 3, "0");
+        String codigo = "CAT" + cnpjPronto + codigoZero;
+        categoria.setCodigo(codigo);
         categoria = this.iCategoriaRepository.save(categoria);
 
         return CategoriaDTO.of(categoria);
@@ -124,9 +113,18 @@ public class CategoriaService {
             LOGGER.debug("Payload: {}", categoriaDTO);
             LOGGER.debug("Categoria existente: {}", categoriaExistente);
 
+            Fornecedor fornecedorCompleto = new Fornecedor();
+            fornecedorCompleto = fornecedorService.findByIdFornecedor(categoriaDTO.getIdFornecedor());
+            String cnpj = fornecedorCompleto.getCnpj();
+            String cnpjPronto = cnpj.substring(10);
+
+            String x = categoriaDTO.getCodigo();
+            String codigoZero = org.apache.commons.lang.StringUtils.leftPad(x, 3, "0");
+            String codigo = "CAT" + cnpjPronto + codigoZero;
+
             categoriaDTO.setNome(categoriaDTO.getNome());
             categoriaDTO.setId(categoriaDTO.getId());
-            categoriaDTO.setCodigo(categoriaDTO.getCodigo());
+            categoriaDTO.setCodigo(codigo);
             categoriaDTO.setIdFornecedor(categoriaDTO.getIdFornecedor());
 
             categoriaExistente = this.iCategoriaRepository.save(categoriaExistente);
@@ -174,16 +172,15 @@ public class CategoriaService {
             mask.setValueContainsLiteralCharacters(false);
             String cnpjMask = mask.valueToString(cnpj);
 
-            cvs.writeNext(new String[]{linha.getId().toString(), linha.getNome(),linha.getCodigo(),linha.getFornecedor().getRazao(), cnpjMask});
+            cvs.writeNext(new String[]{linha.getId().toString(), linha.getNome(), linha.getCodigo(), linha.getFornecedor().getRazao(), cnpjMask});
         }
 
     }
 
-    public void Import() throws IOException {
-        //Reader br = Files.newBufferedReader(Paths.get("C:\\Users\\jordana.tomio\\Downloads\\exportando.csv"));
-        String arquivo = "C:\\Users\\jordana.tomio\\Downloads\\exportando.csv";
-        BufferedReader reader = new BufferedReader(new FileReader(arquivo));
-       // CSVReader cs = new CSVReader(br, ';');
+    public void Import(MultipartFile file) throws IOException {
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+
 
         reader.readLine();
         String line = " ";
@@ -202,12 +199,30 @@ public class CategoriaService {
             String razao = categoria[3];
             String cnpj = categoria[4];
             cnpj = cnpj.replaceAll("[^0-9]", "");
-            Fornecedor fornecedorCompleto = iFornecedorRepository.findByCnpjAndRazao(cnpj, razao);
+            Fornecedor fornecedorCompleto = fornecedorService.findFornecedor(cnpj, razao);
             Long idFornecedor = fornecedorCompleto.getId();
             categoriaDTO.setIdFornecedor(idFornecedor);
 
 
             save(categoriaDTO);
         }
+    }
+
+    public boolean existsByIdCodigo(String codigo) {
+        iCategoriaRepository.existsByCodigo(codigo);
+        return iCategoriaRepository.existsByCodigo(codigo);
+    }
+
+    public Categoria findCategoriaNomeECodigo(String nomeCategoria, String codigoCategoria) {
+        iCategoriaRepository.findByNomeAndCodigo(nomeCategoria, codigoCategoria);
+        return iCategoriaRepository.findByNomeAndCodigo(nomeCategoria, codigoCategoria);
+    }
+
+    public Categoria findByCodigo(String codigoCategoria) {
+        return iCategoriaRepository.findByCodigo(codigoCategoria);
+    }
+
+    public List<Categoria> findAllFornecedor(Long fornecedor) {
+        return iCategoriaRepository.findAllByFornecedor_IdIs(fornecedor);
     }
 }

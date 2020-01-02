@@ -1,10 +1,10 @@
 package br.com.hbsis.funcionario;
 
 public class FuncionarioDTO {
-    Long id;
-    String nome;
-    String email;
-    String uuid;
+   private Long id;
+   private String nome;
+   private String email;
+   private String uuid;
 
     public FuncionarioDTO(Long id, String nome, String email, String uuid) {
         this.id = id;

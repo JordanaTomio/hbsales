@@ -1,4 +1,4 @@
-package br.com.hbsis.Pedidos;
+package br.com.hbsis.pedidos;
 
 public enum StatusName {
     ATIVO,

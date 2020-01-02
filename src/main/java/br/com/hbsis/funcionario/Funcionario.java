@@ -7,13 +7,13 @@ import javax.persistence.*;
 public class Funcionario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    @Column(name = "nome_funcionario", nullable = false, length = 50)
-    String nomeFuncionario;
-    @Column(name = "email_funcionario", nullable = false, length = 50)
-    String emailFuncionario;
-    @Column(name = "uuid_funcionario", nullable = false, length = 36)
-    String uuidFuncionario;
+    private Long id;
+    @Column(name = "nome", nullable = false, length = 50)
+    private String nomeFuncionario;
+    @Column(name = "email", nullable = false, length = 50)
+    private String emailFuncionario;
+    @Column(name = "uuid", nullable = false, length = 36)
+    private String uuidFuncionario;
 
     public Long getId() {
         return id;

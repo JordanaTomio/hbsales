@@ -13,7 +13,7 @@ public class Fornecedor {
     private String razao;
     @Column(name = "cnpj", unique = true, nullable = false, length = 14)
     private String cnpj;
-    @Column(name = "nomefantasia", nullable = false, length = 100)
+    @Column(name = "nome_fantasia", nullable = false, length = 100)
     private String nomefantasia;
     @Column(name = "endereco", nullable = false, length = 100)
     private String endereco;
