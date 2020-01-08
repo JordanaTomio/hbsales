@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/linhas")
 public class LinhaCategoriaRest {
     private static final Logger LOGGER = LoggerFactory.getLogger(LinhaCategoriaRest.class);
-
     private final LinhaCategoriaService linha_categoriaService;
 
     @Autowired
@@ -28,6 +27,7 @@ public class LinhaCategoriaRest {
 
         return this.linha_categoriaService.save(linha_categoriaDTO);
     }
+
     @PostMapping("/import-csv")
     public void importCSV(@RequestParam("file") MultipartFile file) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de importação...");
@@ -35,7 +35,6 @@ public class LinhaCategoriaRest {
         this.linha_categoriaService.importCategoria(file);
 
         LOGGER.info("Importado com sucesso...");
-
     }
 
     @GetMapping("/export-csv")
@@ -47,7 +46,6 @@ public class LinhaCategoriaRest {
         LOGGER.info("Exportado com sucesso...");
     }
 
-
     @PutMapping("/{id}")
     public LinhaCategoriaDTO udpate(@PathVariable("id") Long id, @RequestBody LinhaCategoriaDTO linha_categoriaDTO) {
         LOGGER.info("Recebendo Update para linha de categoria de ID: {}", id);
@@ -55,6 +53,7 @@ public class LinhaCategoriaRest {
 
         return this.linha_categoriaService.update(linha_categoriaDTO, id);
     }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
         LOGGER.info("Recebendo Delete para linha de categoria de ID: {}", id);

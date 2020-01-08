@@ -38,8 +38,8 @@ public class Mail {
         periodoCompleto = periodoService.findByIdPeriodo(pedidos.getIdPeriodo());
 
         message.setSubject("Mensagem de confirmação de retirada de pedido.");
-        message.setText("Olá " + funcionarioCompleto.getNomeFuncionario() + ", seu pedido de código " + pedidos.getCodigo() + " foi finalizado. A data de retirada está prevista para " + periodoCompleto.getRetiradaPedido() + " .");
-        message.setTo(funcionarioCompleto.getEmailFuncionario());
+        message.setText("Olá " + funcionarioCompleto.getNome() + ", seu pedido de código " + pedidos.getCodigo() + " foi finalizado. A data de retirada está prevista para " + periodoCompleto.getRetiradaPedido() + " .");
+        message.setTo(funcionarioCompleto.getEmail());
         message.setFrom("dannatomio@gmail.com");
 
         try {

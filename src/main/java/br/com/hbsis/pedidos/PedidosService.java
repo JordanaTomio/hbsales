@@ -70,7 +70,7 @@ public class PedidosService {
         produtosCompleto = produtosService.findByIdProduto(pedidosDTO.getProduto());
 
         LocalDate hoje = LocalDate.now();
-        String funcionarioUuid = funcionarioCompleto.getUuidFuncionario();
+        String funcionarioUuid = funcionarioCompleto.getUuid();
         String produtoName = produtosCompleto.getNome();
         String cnpjFornecedor = fornecedorCompleto.getCnpj();
         int quantidade = pedidosDTO.getQuantidade();
@@ -239,7 +239,7 @@ public class PedidosService {
                 String razaoFornecedor = periodoCompleto.getFornecedor().getRazao();
                 String fornecedorPronto = razaoFornecedor + " - " + cnpjMask;
 
-                cvs.writeNext(new String[]{pedidos.getFuncionario().getNomeFuncionario(), fornecedorPronto, nomeProduto, quantidade});
+                cvs.writeNext(new String[]{pedidos.getFuncionario().getNome(), fornecedorPronto, nomeProduto, quantidade});
             }
         }
     }

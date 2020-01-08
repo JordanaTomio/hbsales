@@ -9,11 +9,11 @@ public class Funcionario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "nome", nullable = false, length = 50)
-    private String nomeFuncionario;
+    private String nome;
     @Column(name = "email", nullable = false, length = 50)
-    private String emailFuncionario;
+    private String email;
     @Column(name = "uuid", nullable = false, length = 36)
-    private String uuidFuncionario;
+    private String uuid;
 
     public Long getId() {
         return id;
@@ -23,37 +23,37 @@ public class Funcionario {
         this.id = id;
     }
 
-    public String getNomeFuncionario() {
-        return nomeFuncionario;
+    public String getNome() {
+        return nome;
     }
 
-    void setNomeFuncionario(String nomeFuncionario) {
-        this.nomeFuncionario = nomeFuncionario;
+    void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public String getEmailFuncionario() {
-        return emailFuncionario;
+    public String getEmail() {
+        return email;
     }
 
-    void setEmailFuncionario(String emailFuncionario) {
-        this.emailFuncionario = emailFuncionario;
+    void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getUuidFuncionario() {
-        return uuidFuncionario;
+    public String getUuid() {
+        return uuid;
     }
 
-    void setUuidFuncionario(String uuidFuncionario) {
-        this.uuidFuncionario = uuidFuncionario;
+    void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Override
     public String toString() {
         return "Funcionario{" +
                 "id=" + id +
-                ", nomeFuncionario='" + nomeFuncionario + '\'' +
-                ", emailFuncionario='" + emailFuncionario + '\'' +
-                ", uuidFuncionario='" + uuidFuncionario + '\'' +
+                ", nomeFuncionario='" + nome + '\'' +
+                ", emailFuncionario='" + email + '\'' +
+                ", uuidFuncionario='" + uuid + '\'' +
                 '}';
     }
 }

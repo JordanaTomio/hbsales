@@ -14,7 +14,6 @@ import java.util.Objects;
 @Service
 public class FuncionarioService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FuncionarioService.class);
-
     private final IFuncionarioRepository iFuncionarioRepository;
 
     @Autowired
@@ -23,21 +22,21 @@ public class FuncionarioService {
     }
 
     public FuncionarioDTO save(FuncionarioDTO funcionarioDTO) {
-
         this.validate(funcionarioDTO);
 
         LOGGER.info("Cadastrando funcionario");
         LOGGER.debug("Funcionario: {}", funcionarioDTO);
 
         Funcionario funcionario = new Funcionario();
-        funcionario.setNomeFuncionario(funcionarioDTO.getNome());
-        funcionario.setEmailFuncionario(funcionarioDTO.getEmail());
-        funcionario.setUuidFuncionario(funcionarioDTO.getUuid());
+        funcionario.setNome(funcionarioDTO.getNome());
+        funcionario.setEmail(funcionarioDTO.getEmail());
+        funcionario.setUuid(funcionarioDTO.getUuid());
 
         funcionario = this.iFuncionarioRepository.save(funcionario);
 
         return FuncionarioDTO.of(funcionario);
     }
+
     private void validate(FuncionarioDTO funcionarioDTO) {
         LOGGER.info("Validando Funcionario");
 
@@ -65,6 +64,7 @@ public class FuncionarioService {
         funcionarioDTO.setUuid(Objects.requireNonNull(response.getBody()).getEmployeeUuid());
         funcionarioDTO.setNome(response.getBody().getEmployeeName());
     }
+
     public Funcionario findByIdFuncionario(Long id){
         return this.iFuncionarioRepository.findById(id).get();
     }

@@ -16,9 +16,9 @@ public class FuncionarioDTO {
     public static FuncionarioDTO of(Funcionario funcionario) {
         return new FuncionarioDTO(
                 funcionario.getId(),
-                funcionario.getNomeFuncionario(),
-                funcionario.getEmailFuncionario(),
-                funcionario.getUuidFuncionario()
+                funcionario.getNome(),
+                funcionario.getEmail(),
+                funcionario.getUuid()
         );
     }
 
