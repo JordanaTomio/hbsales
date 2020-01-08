@@ -6,7 +6,6 @@ public class LinhaCategoriaDTO {
     private String nomeLinha;
     private String codigoLinha;
 
-
     public LinhaCategoriaDTO(Long id, Long categoriaId, String nomeLinha, String codigoLinha) {
         this.id = id;
         this.categoria = categoriaId;
@@ -15,7 +14,6 @@ public class LinhaCategoriaDTO {
     }
 
     public LinhaCategoriaDTO() {
-
     }
 
     public static LinhaCategoriaDTO of(LinhaCategoria linha_categoria) {

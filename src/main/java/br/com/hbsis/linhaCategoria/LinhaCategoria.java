@@ -1,6 +1,5 @@
 package br.com.hbsis.linhaCategoria;
 
-
 import br.com.hbsis.categoria.Categoria;
 
 import javax.persistence.*;

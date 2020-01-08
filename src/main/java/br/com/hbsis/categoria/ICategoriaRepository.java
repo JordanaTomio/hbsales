@@ -9,12 +9,10 @@ import java.util.List;
 @Repository
 interface ICategoriaRepository extends JpaRepository<Categoria, Long> {
 
-    public Categoria findByNomeAndCodigo(String nome, String codigo);
+    Categoria findByNomeAndCodigo(String nome, String codigo);
 
-    public Categoria findByCodigo(String codigo);
+    boolean existsByCodigo(String codigo);
 
-    public boolean existsByCodigo(String codigo);
-
-    public List<Categoria> findAllByFornecedor_IdIs(Long idFornecedor);
+    List<Categoria> findAllByFornecedor_IdIs(Long idFornecedor);
 
 }

@@ -13,9 +13,7 @@ import java.util.Optional;
 
 @Service
 public class PeriodoService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PeriodoService.class);
-
     private final FornecedorService fornecedorService;
     private final IPeriodoRepository iPeriodoRepository;
 
@@ -23,7 +21,6 @@ public class PeriodoService {
         this.fornecedorService = fornecedorService;
         this.iPeriodoRepository = iPeriodoRepository;
     }
-
 
     public PeriodoDTO save(PeriodoDTO periodoDTO) {
 
@@ -40,7 +37,8 @@ public class PeriodoService {
         periodo.setDescricao(periodoDTO.getDescricao());
         periodo.setRetiradaPedido(periodoDTO.getRetiradaPedido());
 
-        Fornecedor fornecedorCompleto = new Fornecedor();
+        new Fornecedor();
+        Fornecedor fornecedorCompleto;
         fornecedorCompleto = fornecedorService.findByIdFornecedor(periodoDTO.getIdFornecedor());
         periodo.setFornecedor(fornecedorCompleto);
 
@@ -49,7 +47,7 @@ public class PeriodoService {
         return PeriodoDTO.of(periodo);
     }
 
-    public List<Periodo> findAll() {
+    private List<Periodo> findAll() {
         return iPeriodoRepository.findAll();
     }
 
@@ -95,15 +93,6 @@ public class PeriodoService {
 
     }
 
-    public PeriodoDTO findById(Long id) {
-        Optional<Periodo> periodoOptional = this.iPeriodoRepository.findById(id);
-
-        if (periodoOptional.isPresent()) {
-            return PeriodoDTO.of(periodoOptional.get());
-        }
-
-        throw new IllegalArgumentException(String.format("ID %s não existe", id));
-    }
 
     public PeriodoDTO update(PeriodoDTO periodoDTO, Long id) {
         Optional<Periodo> periodoExistenteOptional = this.iPeriodoRepository.findById(id);
@@ -120,16 +109,15 @@ public class PeriodoService {
                 throw new IllegalArgumentException("Um Período de Vendas não pode ser mais alterado após o término de sua vigência");
             }
 
-
             periodoExistente.setInicioVendas(periodoDTO.getInicioVendas());
             periodoExistente.setFimVendas(periodoDTO.getFimVendas());
             periodoExistente.setDescricao(periodoDTO.getDescricao());
             periodoExistente.setRetiradaPedido(periodoDTO.getRetiradaPedido());
 
-            Fornecedor fornecedorCompleto = new Fornecedor();
+            new Fornecedor();
+            Fornecedor fornecedorCompleto;
             fornecedorCompleto = fornecedorService.findByIdFornecedor(periodoDTO.getIdFornecedor());
             periodoExistente.setFornecedor(fornecedorCompleto);
-
 
             periodoExistente = this.iPeriodoRepository.save(periodoExistente);
 
@@ -154,17 +142,5 @@ public class PeriodoService {
         }
 
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
-    }
-    public Periodo findByIdFornecedor(Long id) {
-        Optional<Periodo> periodoOptional = this.iPeriodoRepository.findByFornecedor(id);
-
-        if (periodoOptional.isPresent()) {
-            return periodoOptional.get();
-        }
-        throw new IllegalArgumentException(String.format("nao existe periodo desse fornecedor não existe", id));
-    }
-
-    public boolean existsByIdFornecedor(Long id){
-        return iPeriodoRepository.existsByFornecedor(id);
     }
 }

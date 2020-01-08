@@ -17,9 +17,6 @@ public class InvoiceDTO {
         this.totalValue = totalValue;
     }
 
-    public InvoiceDTO(String cnpjFornecedor, String employeeUuid, Set<InvoiceItemDTOSet> toList, double totalValue) {
-    }
-
     public InvoiceDTO() {
 
     }

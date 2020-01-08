@@ -18,6 +18,7 @@ public class FornecedorRest {
     public FornecedorRest(FornecedorService fornecedorService) {
         this.fornecedorService = fornecedorService;
     }
+
     @PostMapping
     public FornecedorDTO save(@RequestBody FornecedorDTO fornecedorDTO) {
         LOGGER.info("Recebendo solicitação de persistência de fornecedor...");

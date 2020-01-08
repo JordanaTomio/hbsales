@@ -22,7 +22,6 @@ public class Categoria {
     private Fornecedor fornecedor;
 
 
-
     public Long getId() {
         return id;
     }

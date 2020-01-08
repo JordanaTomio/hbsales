@@ -4,25 +4,22 @@ public class FornecedorDTO {
     private Long id;
     private String razao;
     private String cnpj;
-    private String nomefantasia;
+    private String nomeFantasia;
     private String endereco;
     private String telefone;
     private String email;
 
-
-
-    public FornecedorDTO(Long id, String razao, String cnpj, String nomefantasia, String endereco, String telefone, String email) {
+    public FornecedorDTO(Long id, String razao, String cnpj, String nomeFantasia, String endereco, String telefone, String email) {
         this.id = id;
         this.razao = razao;
         this.cnpj = cnpj;
-        this.nomefantasia = nomefantasia;
+        this.nomeFantasia = nomeFantasia;
         this.endereco = endereco;
         this.telefone = telefone;
         this.email = email;
     }
 
     public FornecedorDTO() {
-
     }
 
     public static FornecedorDTO of(Fornecedor fornecedor) {
@@ -30,7 +27,7 @@ public class FornecedorDTO {
                 fornecedor.getId(),
                 fornecedor.getRazao(),
                 fornecedor.getCnpj(),
-                fornecedor.getNomefantasia(),
+                fornecedor.getNomeFantasia(),
                 fornecedor.getEndereco(),
                 fornecedor.getTelefone(),
                 fornecedor.getEmail()
@@ -45,7 +42,7 @@ public class FornecedorDTO {
         this.id = id;
     }
 
-    public String getRazao() {
+    String getRazao() {
         return razao;
     }
 
@@ -53,7 +50,7 @@ public class FornecedorDTO {
         this.razao = razao;
     }
 
-    public String getCnpj() {
+    String getCnpj() {
         return cnpj;
     }
 
@@ -61,15 +58,15 @@ public class FornecedorDTO {
         this.cnpj = cnpj;
     }
 
-    public String getNomefantasia() {
-        return nomefantasia;
+    String getNomeFantasia() {
+        return nomeFantasia;
     }
 
-    public void setNomefantasia(String nomefantasia) {
-        this.nomefantasia = nomefantasia;
+    public void setNomeFantasia(String nomeFantasia) {
+        this.nomeFantasia = nomeFantasia;
     }
 
-    public String getEndereco() {
+    String getEndereco() {
         return endereco;
     }
 
@@ -77,7 +74,7 @@ public class FornecedorDTO {
         this.endereco = endereco;
     }
 
-    public String getTelefone() {
+    String getTelefone() {
         return telefone;
     }
 
@@ -85,7 +82,7 @@ public class FornecedorDTO {
         this.telefone = telefone;
     }
 
-    public String getEmail() {
+    String getEmail() {
         return email;
     }
 
@@ -99,7 +96,7 @@ public class FornecedorDTO {
                 "id=" + id +
                 ", razao='" + razao + '\'' +
                 ", cnpj='" + cnpj + '\'' +
-                ", nomefantasia='" + nomefantasia + '\'' +
+                ", nomefantasia='" + nomeFantasia + '\'' +
                 ", endereco='" + endereco + '\'' +
                 ", telefone='" + telefone + '\'' +
                 ", email='" + email + '\'' +

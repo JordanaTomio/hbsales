@@ -11,7 +11,6 @@ public class InvoiceItemDTOSet {
     }
 
     public InvoiceItemDTOSet() {
-
     }
 
     public int getAmount() {

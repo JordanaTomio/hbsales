@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 interface IFornecedorRepository extends JpaRepository <Fornecedor, Long> {
 
-    public Fornecedor findByCnpjAndRazao(String cnpj, String razao);
+    Fornecedor findByCnpjAndRazao(String cnpj, String razao);
 
 }

@@ -29,7 +29,6 @@ public class PedidosDTO {
     }
 
     public PedidosDTO() {
-
     }
 
     public static PedidosDTO of(Pedidos pedidos) {

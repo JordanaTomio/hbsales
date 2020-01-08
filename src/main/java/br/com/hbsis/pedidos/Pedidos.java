@@ -28,7 +28,6 @@ public class Pedidos {
     @JoinColumn(name = "id_fornecedor", referencedColumnName = "id")
     private Fornecedor fornecedor;
 
-
     @ManyToOne
     @JoinColumn(name = "id_periodo", referencedColumnName = "id")
     private Periodo periodo;
@@ -86,7 +85,6 @@ public class Pedidos {
     public void setFornecedor(Fornecedor fornecedor) {
         this.fornecedor = fornecedor;
     }
-
 
 
     public Periodo getPeriodo() {

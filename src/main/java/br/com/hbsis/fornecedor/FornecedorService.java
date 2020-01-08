@@ -11,7 +11,6 @@ import java.util.Optional;
 @Service
 public class FornecedorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FornecedorService.class);
-
     private final IFornecedorRepository iFornecedorRepository;
     private final AlterarCodigo alterarCodigo;
 
@@ -19,7 +18,6 @@ public class FornecedorService {
         this.iFornecedorRepository = iFornecedorRepository;
         this.alterarCodigo = alterarCodigo;
     }
-
 
     public FornecedorDTO save(FornecedorDTO fornecedorDTO) {
 
@@ -30,7 +28,7 @@ public class FornecedorService {
 
         Fornecedor fornecedor = new Fornecedor();
         fornecedor.setCnpj(fornecedorDTO.getCnpj());
-        fornecedor.setNomefantasia(fornecedorDTO.getNomefantasia());
+        fornecedor.setNomeFantasia(fornecedorDTO.getNomeFantasia());
         fornecedor.setEmail(fornecedorDTO.getEmail());
         fornecedor.setEndereco(fornecedorDTO.getEndereco());
         fornecedor.setRazao(fornecedorDTO.getRazao());
@@ -56,8 +54,11 @@ public class FornecedorService {
             throw new IllegalArgumentException("CNPJ não deve ter menos do que 14 digitos");
         }
 
-        if (StringUtils.isEmpty(fornecedorDTO.getNomefantasia())) {
+        if (StringUtils.isEmpty(fornecedorDTO.getNomeFantasia())) {
             throw new IllegalArgumentException("Nome não deve ser nulo/vazio");
+        }
+        if (StringUtils.isEmpty(fornecedorDTO.getEndereco())) {
+            throw new IllegalArgumentException("Endereco não deve ser nulo/vazio");
         }
     }
 
@@ -93,7 +94,7 @@ public class FornecedorService {
             LOGGER.debug("Fornecedor Existente: {}", fornecedorExistente);
 
             fornecedorExistente.setCnpj(fornecedorDTO.getCnpj());
-            fornecedorExistente.setNomefantasia(fornecedorDTO.getNomefantasia());
+            fornecedorExistente.setNomeFantasia(fornecedorDTO.getNomeFantasia());
             fornecedorExistente.setTelefone(fornecedorDTO.getTelefone());
             fornecedorExistente.setRazao(fornecedorDTO.getRazao());
             fornecedorExistente.setEmail(fornecedorDTO.getEmail());
@@ -104,23 +105,22 @@ public class FornecedorService {
             return FornecedorDTO.of(fornecedorExistente);
         }
 
-
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
 
     public void delete(Long id) {
-
         LOGGER.info("Executando delete para fornecedor de ID: [{}]", id);
 
         this.iFornecedorRepository.deleteById(id);
     }
 
-    public Fornecedor findFornecedor(String cnpj, String razao){
+    public Fornecedor findFornecedor(String cnpj, String razao) {
         iFornecedorRepository.findByCnpjAndRazao(cnpj, razao);
         return iFornecedorRepository.findByCnpjAndRazao(cnpj, razao);
     }
-    public boolean existsByIdFornecedor(Long id){
+
+    public boolean existsByIdFornecedor(Long id) {
         iFornecedorRepository.existsById(id);
         return iFornecedorRepository.existsById(id);
     }

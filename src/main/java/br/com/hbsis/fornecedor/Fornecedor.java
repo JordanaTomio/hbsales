@@ -14,7 +14,7 @@ public class Fornecedor {
     @Column(name = "cnpj", unique = true, nullable = false, length = 14)
     private String cnpj;
     @Column(name = "nome_fantasia", nullable = false, length = 100)
-    private String nomefantasia;
+    private String nomeFantasia;
     @Column(name = "endereco", nullable = false, length = 100)
     private String endereco;
     @Column(name = "telefone", nullable = false, length = 12)
@@ -34,7 +34,7 @@ public class Fornecedor {
         return razao;
     }
 
-    public void setRazao(String razao) {
+    void setRazao(String razao) {
         this.razao = razao;
     }
 
@@ -42,39 +42,39 @@ public class Fornecedor {
         return cnpj;
     }
 
-    public void setCnpj(String cnpj) {
+    void setCnpj(String cnpj) {
         this.cnpj = cnpj;
     }
 
-    public String getNomefantasia() {
-        return nomefantasia;
+    String getNomeFantasia() {
+        return nomeFantasia;
     }
 
-    public void setNomefantasia(String nomefantasia) {
-        this.nomefantasia = nomefantasia;
+    void setNomeFantasia(String nomeFantasia) {
+        this.nomeFantasia = nomeFantasia;
     }
 
-    public String getEndereco() {
+    String getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(String endereco) {
+    void setEndereco(String endereco) {
         this.endereco = endereco;
     }
 
-    public String getTelefone() {
+    String getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(String telefone) {
+    void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
-    public String getEmail() {
+    String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    void setEmail(String email) {
         this.email = email;
     }
 
@@ -84,7 +84,7 @@ public class Fornecedor {
                 "id=" + id +
                 ", razao='" + razao + '\'' +
                 ", cnpj='" + cnpj + '\'' +
-                ", nomefantasia='" + nomefantasia + '\'' +
+                ", nomefantasia='" + nomeFantasia + '\'' +
                 ", endereco='" + endereco + '\'' +
                 ", telefone='" + telefone + '\'' +
                 ", email='" + email + '\'' +

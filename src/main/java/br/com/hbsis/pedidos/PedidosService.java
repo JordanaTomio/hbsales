@@ -4,7 +4,6 @@ import br.com.hbsis.fornecedor.Fornecedor;
 import br.com.hbsis.fornecedor.FornecedorService;
 import br.com.hbsis.funcionario.Funcionario;
 import br.com.hbsis.funcionario.FuncionarioService;
-
 import br.com.hbsis.mail.Mail;
 import br.com.hbsis.periodoVendas.Periodo;
 import br.com.hbsis.periodoVendas.PeriodoService;
@@ -26,9 +25,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class PedidosService {
@@ -49,7 +46,6 @@ public class PedidosService {
         this.mail = mail;
     }
 
-
     public PedidosDTO save(PedidosDTO pedidosDTO) {
 
         this.validate(pedidosDTO);
@@ -57,11 +53,16 @@ public class PedidosService {
         LOGGER.info("Salvando pedido");
         LOGGER.debug("Pedido: {}", pedidosDTO);
 
+        new Produtos();
+        new Periodo();
+        new Fornecedor();
+        new Funcionario();
+
         Pedidos pedidos = new Pedidos();
-        Fornecedor fornecedorCompleto = new Fornecedor();
-        Periodo periodoCompleto = new Periodo();
-        Funcionario funcionarioCompleto = new Funcionario();
-        Produtos produtosCompleto = new Produtos();
+        Fornecedor fornecedorCompleto;
+        Periodo periodoCompleto;
+        Funcionario funcionarioCompleto;
+        Produtos produtosCompleto;
 
         funcionarioCompleto = funcionarioService.findByIdFuncionario(pedidosDTO.getIdFuncionario());
         fornecedorCompleto = fornecedorService.findByIdFornecedor(pedidosDTO.getIdFornecedor());
@@ -96,8 +97,8 @@ public class PedidosService {
         invoiceDTO.setEmployeeUuid(funcionarioUuid);
         invoiceDTO.setTotalValue(precoTotal);
         invoiceDTO.setCnpjFornecedor(cnpjFornecedor);
-        invoiceDTO.setInvoiceItemDTOSet(invoiceItemDTOSetList.stream().collect(Collectors.toSet()));
-        this.validateWithAPIInvoiceRest(invoiceDTO);
+        invoiceDTO.setInvoiceItemDTOSet(new HashSet<>(invoiceItemDTOSetList));
+        this.validandoAPI(invoiceDTO);
 
         pedidos = this.iPedidosRepository.save(pedidos);
         mail.mailSave(pedidosDTO);
@@ -111,7 +112,6 @@ public class PedidosService {
         if (pedidosDTO == null) {
             throw new IllegalArgumentException("PedidoDTO não deve ser nulo");
         }
-
         if (StringUtils.isEmpty(pedidosDTO.getCodigo())) {
             throw new IllegalArgumentException("Codigo do pedido não deve ser nulo/vazio");
         }
@@ -123,25 +123,28 @@ public class PedidosService {
             throw new IllegalArgumentException("Periodo de venda do pedido não deve ser nula/vazia");
         }
 
-        Fornecedor fornecedorCompleto = new Fornecedor();
-        fornecedorCompleto = fornecedorService.findByIdFornecedor(pedidosDTO.getIdFornecedor());
-        Produtos produtoCompleto = new Produtos();
+        new Fornecedor();
+        Fornecedor fornecedorCompleto;
+        new Periodo();
+        Periodo periodoCompleto;
+        new Produtos();
+        Produtos produtoCompleto;
+
         produtoCompleto = produtosService.findByIdProduto(pedidosDTO.getProduto());
-        Periodo periodoCompleto = new Periodo();
         periodoCompleto = periodoService.findByIdPeriodo(pedidosDTO.getIdPeriodo());
+        fornecedorCompleto = fornecedorService.findByIdFornecedor(pedidosDTO.getIdFornecedor());
 
         this.validandoPeriodo(periodoCompleto, fornecedorCompleto);
         this.validandoFornecedor(produtoCompleto, fornecedorCompleto);
     }
 
-    private void validateWithAPIInvoiceRest(InvoiceDTO invoiceDTO) {
+    private void validandoAPI(InvoiceDTO invoiceDTO) {
         RestTemplate template = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "f5a00032-1b67-11ea-978f-2e728ce88125");
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<InvoiceDTO> entidade = new HttpEntity<>(invoiceDTO, headers);
         ResponseEntity<InvoiceDTO> result = template.exchange("http://10.2.54.25:9999/api/invoice", HttpMethod.POST, entidade, InvoiceDTO.class); //out
-
     }
 
     private void validandoFornecedor(Produtos produtos, Fornecedor fornecedor) {
@@ -149,7 +152,7 @@ public class PedidosService {
         Long idFornecedor = produtos.getLinha().getCategoria().getFornecedor().getId();
         if (!idFornecedor.toString().equals(fornecedor.getId().toString())) {
             throw new IllegalArgumentException("Produto nao pertence ao fornecedor");
-        } else if (idFornecedor.toString().equals(fornecedor.getId().toString())) {
+        } else {
             LOGGER.info("Produto pertence ao fornecedor!");
         }
     }
@@ -159,17 +162,13 @@ public class PedidosService {
         Long idPeriodo = periodo.getFornecedor().getId();
         if (!idPeriodo.toString().equals(fornecedor.getId().toString())) {
             throw new IllegalArgumentException("Não existe um periodo de vendas para este fornecedor");
-        } else if (idPeriodo.toString().equals(fornecedor.getId().toString())) {
+        } else {
             LOGGER.info("Existe um periodo de vendas para este fornecedor!");
         }
     }
 
-    public List<Pedidos> findAll() {
+    private List<Pedidos> findAll() {
         return iPedidosRepository.findAll();
-    }
-
-    public List<Pedidos> findId(Long id) {
-        return iPedidosRepository.findAllById(id);
     }
 
     public void exportPeriodo(HttpServletResponse response, Long id) throws IOException, ParseException {
@@ -185,10 +184,10 @@ public class PedidosService {
                 .withLineEnd(CSVWriter.DEFAULT_LINE_END)
                 .build();
 
-        String headerCSV[] = {"fornecedor", "nome_produto", "quantidade"};
+        String[] headerCSV = {"fornecedor", "nome_produto", "quantidade"};
         cvs.writeNext(headerCSV);
         for (Pedidos pedidos : findAll()) {
-            Periodo periodoCompleto = new Periodo();
+            Periodo periodoCompleto;
             periodoCompleto = periodoService.findByIdPeriodo(id);
 
             String quantidade = pedidos.getQuantidade().toString();
@@ -204,12 +203,8 @@ public class PedidosService {
                 String fornecedorPronto = razaoFornecedor + " - " + cnpjMask;
 
                 cvs.writeNext(new String[]{fornecedorPronto, nomeProduto, quantidade});
-            } else {
-
             }
-
         }
-
     }
 
     public void exportFuncionario(HttpServletResponse response, Long id) throws IOException, ParseException {
@@ -225,15 +220,12 @@ public class PedidosService {
                 .withLineEnd(CSVWriter.DEFAULT_LINE_END)
                 .build();
 
-        String headerCSV[] = {"funcionario", "fornecedor", "nome_produto", "quantidade"};
+        String[] headerCSV = {"funcionario", "fornecedor", "nome_produto", "quantidade"};
         cvs.writeNext(headerCSV);
 
         for (Pedidos pedidos : findAll()) {
-            Funcionario funcionarioCompleto = new Funcionario();
-            funcionarioCompleto = funcionarioService.findByIdFuncionario(id);
-
             if (pedidos.getFuncionario().getId().toString().equals(id.toString())) {
-                Periodo periodoCompleto = new Periodo();
+                Periodo periodoCompleto;
                 periodoCompleto = periodoService.findByIdPeriodo(pedidos.getPeriodo().getId());
 
                 String quantidade = pedidos.getQuantidade().toString();
@@ -248,33 +240,25 @@ public class PedidosService {
                 String fornecedorPronto = razaoFornecedor + " - " + cnpjMask;
 
                 cvs.writeNext(new String[]{pedidos.getFuncionario().getNomeFuncionario(), fornecedorPronto, nomeProduto, quantidade});
-            } else {
-
             }
         }
-
-
     }
 
     public void visualizaPedidos(Long id) {
         for (Pedidos pedidos : findAll()) {
-            Funcionario funcionarioCompleto = new Funcionario();
-            funcionarioCompleto = funcionarioService.findByIdFuncionario(id);
             String pedido;
-
             if (pedidos.getFuncionario().getId().toString().equals(id.toString())) {
                 if (pedidos.getStatus().equals(StatusName.ATIVO) || pedidos.getStatus().equals(StatusName.RETIRADO)) {
                     pedido = pedidos.toString();
                     LOGGER.info(pedido);
-                } else {
                 }
-            } else {
             }
         }
     }
 
     public void cancelaPedido(Long id) {
-        Pedidos pedidos = new Pedidos();
+        new Pedidos();
+        Pedidos pedidos;
         pedidos = this.findById(id);
 
         if (pedidos.getStatus().equals(StatusName.ATIVO) || pedidos.getStatus().equals(StatusName.RETIRADO)) {
@@ -283,7 +267,6 @@ public class PedidosService {
                 this.update(PedidosDTO.of(pedidos), id);
             }
         }
-
     }
 
     private Pedidos findById(Long id) {
@@ -302,13 +285,17 @@ public class PedidosService {
             LOGGER.debug("Payload: {}", pedidosDTO);
             LOGGER.debug("Pedido existente: {}", pedidoExiste);
 
-            Periodo periodoCompleto = new Periodo();
+            new Periodo();
+            Periodo periodoCompleto;
             periodoCompleto = periodoService.findByIdPeriodo(pedidosDTO.getIdPeriodo());
-            Produtos produtoCompleto = new Produtos();
+            new Produtos();
+            Produtos produtoCompleto;
             produtoCompleto = produtosService.findByIdProduto(pedidosDTO.getProduto());
-            Funcionario funcionarioCompleto = new Funcionario();
+            new Funcionario();
+            Funcionario funcionarioCompleto;
             funcionarioCompleto = funcionarioService.findByIdFuncionario(pedidosDTO.getIdFuncionario());
-            Fornecedor fornecedorCompleto = new Fornecedor();
+            new Fornecedor();
+            Fornecedor fornecedorCompleto;
             fornecedorCompleto = fornecedorService.findByIdFornecedor(pedidosDTO.getIdFornecedor());
 
             int quantidade = pedidosDTO.getQuantidade();
@@ -323,7 +310,6 @@ public class PedidosService {
             pedidoExiste.setFornecedor(fornecedorCompleto);
             pedidoExiste.setValorTotal(quantidade * preco);
 
-
             pedidoExiste = this.iPedidosRepository.save(pedidoExiste);
 
             return PedidosDTO.of(pedidoExiste);
@@ -332,12 +318,13 @@ public class PedidosService {
     }
 
     private void validateUpdate(Long id) {
-        Pedidos pedidos = new Pedidos();
+        new Pedidos();
+        Pedidos pedidos;
         pedidos = this.findById(id);
 
         if (pedidos.getStatus().equals(StatusName.ATIVO) || pedidos.getStatus().equals(StatusName.RETIRADO)) {
             if (pedidos.getPeriodo().getInicioVendas().isBefore(LocalDate.now().plusDays(1)) && pedidos.getPeriodo().getFimVendas().isAfter(LocalDate.now())) {
-
+                LOGGER.info("Pedido válido!");
             } else {
                 throw new IllegalArgumentException("Modificacao nao foi possivel pois pedido nao atende a todos os requisitos");
             }
@@ -345,7 +332,8 @@ public class PedidosService {
     }
 
     public void retiraPedido(Long id) {
-        Pedidos pedidos = new Pedidos();
+        new Pedidos();
+        Pedidos pedidos;
         pedidos = this.findById(id);
         if (pedidos.getPeriodo().getRetiradaPedido().toString().equals(LocalDate.now().toString())) {
             if (pedidos.getStatus().equals(StatusName.ATIVO)) {

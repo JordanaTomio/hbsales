@@ -30,7 +30,6 @@ import java.util.Optional;
 @Service
 public class ProdutosService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProdutosService.class);
-
     private final IProdutosRepository iProdutosRepository;
     private final LinhaCategoriaService linhaCategoriaService;
     private final FornecedorService fornecedorService;
@@ -43,15 +42,19 @@ public class ProdutosService {
         this.categoriaService = categoriaService;
     }
 
-
-    public ProdutosDTO save(ProdutosDTO produtosDTO) throws ParseException {
-
+    public ProdutosDTO save(ProdutosDTO produtosDTO) {
+        new LinhaCategoria();
+        LinhaCategoria linhaCompleta;
         this.validate(produtosDTO);
 
         LOGGER.info("Salvando produto");
         LOGGER.debug("Produto: {}", produtosDTO);
 
-        LinhaCategoria linhaCompleta = new LinhaCategoria();
+        double preco = produtosDTO.getPreco();
+        double pesoUni = produtosDTO.getPesoUnidade();
+        String x = produtosDTO.getCodigo();
+        String codigoZero = StringUtils.leftPad(x, 10, "0");
+        String codigo = codigoZero.toUpperCase();
 
         Produtos produtos = new Produtos();
         produtos.setId(produtosDTO.getId());
@@ -60,28 +63,15 @@ public class ProdutosService {
         produtos.setUnidadeCaixa(produtosDTO.getUnidadeCaixa());
         produtos.setValidade(produtosDTO.getValidade());
         produtos.setUnidadeMedida(produtosDTO.getUnidadeMedida());
-
-        double preco = produtosDTO.getPreco();
-        double pesoUni = produtosDTO.getPesoUnidade();
         produtos.setPesoUnidade(pesoUni);
         produtos.setPreco(preco);
-
-        int zero = produtosDTO.getCodigo().length();
-        String codigoZero;
-        String codigo;
-
-        String x = produtosDTO.getCodigo();
-        codigoZero = StringUtils.leftPad(x, 10, "0");
-        codigo = codigoZero.toUpperCase();
         produtos.setCodigo(codigo);
-
 
         linhaCompleta = linhaCategoriaService.findByIdLinha(produtosDTO.getIdLinha());
         produtos.setLinha(linhaCompleta);
-
         produtos = this.iProdutosRepository.save(produtos);
 
-        return produtosDTO.of(produtos);
+        return ProdutosDTO.of(produtos);
     }
 
     private void validate(ProdutosDTO produtosDTO) {
@@ -121,7 +111,8 @@ public class ProdutosService {
             produtoExistente.setCodigo(produtosDTO.getCodigo());
             produtoExistente.setUnidadeMedida(produtosDTO.getUnidadeMedida());
 
-            LinhaCategoria linhaCompleta = new LinhaCategoria();
+            new LinhaCategoria();
+            LinhaCategoria linhaCompleta;
             linhaCompleta = linhaCategoriaService.findByIdLinha(produtosDTO.getIdLinha());
             produtoExistente.setLinha(linhaCompleta);
 
@@ -139,29 +130,27 @@ public class ProdutosService {
         this.iProdutosRepository.deleteById(id);
     }
 
-    public List<Produtos> findAll() {
+    private List<Produtos> findAll() {
         return iProdutosRepository.findAll();
     }
 
-    public void Export(HttpServletResponse response) throws IOException, ParseException {
-
+    public void exportProdutos(HttpServletResponse response) throws IOException, ParseException {
         String nomearquivo = "exportandoProdutos.csv";
         response.setContentType("text/csv");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + nomearquivo + "\"");
 
         PrintWriter out = response.getWriter();
-
         ICSVWriter cvs = new CSVWriterBuilder(out)
                 .withSeparator(';')
                 .withEscapeChar(CSVWriter.DEFAULT_ESCAPE_CHARACTER)
                 .withLineEnd(CSVWriter.DEFAULT_LINE_END)
                 .build();
 
-
-        String headerCSV[] = {"id", "nome", "codigo", "preço", "unidade_caixa", "peso_unidade", "validade", "cod_categoria_linha", "nome_categoria_linha", "cod_categoria", "nome_categoria", "cnpj_fornecedor", "razao_fornecedor"};
+        String[] headerCSV = {"id", "nome", "codigo", "preço", "unidade_caixa", "peso_unidade", "validade", "cod_categoria_linha", "nome_categoria_linha", "cod_categoria", "nome_categoria", "cnpj_fornecedor", "razao_fornecedor"};
         cvs.writeNext(headerCSV);
         for (Produtos linha : findAll()) {
+
             Double precoForm = linha.getPreco();
             NumberFormat formatter = NumberFormat.getCurrencyInstance();
             formatter.setMaximumFractionDigits(2);
@@ -180,40 +169,32 @@ public class ProdutosService {
             mask.setValueContainsLiteralCharacters(false);
             String cnpjMask = mask.valueToString(cnpj);
 
-
-            Long codigoFornecedor = linha.getLinha().getCategoria().getFornecedor().getId();
-            Fornecedor fornecedorCompleto = new Fornecedor();
-            fornecedorCompleto = fornecedorService.findByIdFornecedor(codigoFornecedor);
-            String cnpjA = fornecedorCompleto.getCnpj();
-            String cnpjPronto = cnpjA.substring(10);
-            String codigoZero;
-
-            String x = linha.getLinha().getCategoria().getCodigo();
-            codigoZero = StringUtils.leftPad(x, 3, "0");
-            String codigoPronto = "CAT" + cnpjPronto + codigoZero;
-
+            String codLinhaCategoria = linha.getLinha().getCodigoLinha();
+            String codLinhaCategoriaForm = StringUtils.leftPad(codLinhaCategoria, 10, "0");
+            String codLinhaFormatado = "'" + codLinhaCategoriaForm;
             String y = linha.getCodigo();
             String codigoY = StringUtils.leftPad(y, 10, "0");
-            String codigo = codigoY.toUpperCase();
+            String codigoX = "'" + codigoY;
 
+            String codigoLinhaCat = linha.getLinha().getCategoria().getCodigo();
 
-            cvs.writeNext(new String[]{linha.getId().toString(), linha.getNome(), codigo, precoFormatado, Float.toString(linha.getUnidadeCaixa()), pesoUnid, data, linha.getLinha().getCodigoLinha(), linha.getLinha().getNomeLinha(), codigoPronto, linha.getLinha().getCategoria().getNome(), cnpjMask, linha.getLinha().getCategoria().getFornecedor().getRazao()});
+            cvs.writeNext(new String[]{linha.getId().toString(), linha.getNome(), codigoX, precoFormatado, Float.toString(linha.getUnidadeCaixa()), pesoUnid, data, codLinhaFormatado, linha.getLinha().getNomeLinha(), codigoLinhaCat, linha.getLinha().getCategoria().getNome(), cnpjMask, linha.getLinha().getCategoria().getFornecedor().getRazao()});
         }
-
     }
 
-    public void Import() throws IOException, ParseException {
-        String arquivo = "C:\\Users\\jordana.tomio\\Desktop\\exportandoProdutos2";
-        BufferedReader reader = new BufferedReader(new FileReader(arquivo));
+    public void importProdutos(MultipartFile file) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
 
         reader.readLine();
-        String line = " ";
+        String line;
         String splitBy = ";";
 
         while ((line = reader.readLine()) != null) {
             String[] categoria = line.split(splitBy);
             String peso = categoria[5].replaceAll("[^0-9.]", "");
+            String pesoForm = peso.substring(0, peso.length() - 1);
             String medida = categoria[5].replaceAll("[0-9]", "");
+            String medidaForm = medida.replace(".", "");
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String dateString = categoria[6];
             LocalDate validade = LocalDate.parse(dateString, dateTimeFormatter);
@@ -221,22 +202,25 @@ public class ProdutosService {
             String precoForm = preco.substring(3);
             String precoFormatado = precoForm.replaceAll(",", ".");
             String codigo = categoria[7];
+            String codigoForm = codigo.replace("'", "");
+            String unidadeCaixa = categoria[4].replace("0", "");
+            String uniCaixa = unidadeCaixa.replace(".", "");
 
             ProdutosDTO produtosDTO = new ProdutosDTO();
             produtosDTO.setId(Long.parseLong(categoria[0]));
             produtosDTO.setNome(categoria[1]);
             produtosDTO.setPreco(Float.parseFloat(precoFormatado));
-            produtosDTO.setUnidadeCaixa(Integer.parseInt(categoria[4]));
-            produtosDTO.setPesoUnidade(Float.parseFloat(peso));
+            produtosDTO.setUnidadeCaixa(Integer.parseInt(uniCaixa));
+            produtosDTO.setPesoUnidade(Float.parseFloat(pesoForm));
             produtosDTO.setValidade(validade);
-            produtosDTO.setUnidadeMedida(medida);
+            produtosDTO.setUnidadeMedida(medidaForm);
 
             LinhaCategoria linhaCompleta = new LinhaCategoria();
-            linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codigo);
+            linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codigoForm);
             Long idLinha = linhaCompleta.getId();
 
             produtosDTO.setIdLinha(idLinha);
-            produtosDTO.setCodigo(categoria[2]);
+            produtosDTO.setCodigo(categoria[2].replace("'", ""));
 
             save(produtosDTO);
         }
@@ -252,19 +236,21 @@ public class ProdutosService {
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
-    public void importFornecedor(Long id, MultipartFile file) throws IOException, ParseException {
-
+    public void importFornecedor(Long id, MultipartFile file) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
 
         if (fornecedorService.existsByIdFornecedor(id)) {
             reader.readLine();
-            String line = " ";
+            String line;
             String splitBy = ";";
 
             while ((line = reader.readLine()) != null) {
-                LinhaCategoria linhaCompleta = new LinhaCategoria();
-                Categoria categoriaCompleta = new Categoria();
-                Fornecedor fornecedorCompleto = new Fornecedor();
+                new LinhaCategoria();
+                LinhaCategoria linhaCompleta;
+                new Categoria();
+                Categoria categoriaCompleta;
+                new Fornecedor();
+                Fornecedor fornecedorCompleto;
 
                 String[] categoria = line.split(splitBy);
                 String peso = categoria[5].replaceAll("[^0-9.]", "");
@@ -306,9 +292,7 @@ public class ProdutosService {
                     categoriaDTO.setIdFornecedor(idFornecedor);
                     categoriaDTO.setNome(nomeCategoria);
                     categoriaService.save(categoriaDTO);
-                }
-
-                if (!linhaCategoriaService.existsByLinhaCodigo(codigoLinha)) {
+                } if (!linhaCategoriaService.existsByLinhaCodigo(codigoLinha)) {
                     LinhaCategoriaDTO linha_categoriaDTO = new LinhaCategoriaDTO();
                     LOGGER.info("Linha de Categoria não existente, criando nova...");
 
@@ -324,7 +308,6 @@ public class ProdutosService {
                     LinhaCategoriaDTO linha_categoriaDTO = new LinhaCategoriaDTO();
                     linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codigoLinha);
                     Long idCategoria = linhaCompleta.getId();
-                    String catego = linhaCompleta.getCodigoLinha();
 
                     linha_categoriaDTO.setCodigoLinha(codigoLinha);
                     linha_categoriaDTO.setCategoria(idCategoria);
@@ -340,14 +323,8 @@ public class ProdutosService {
 
                 } else {
                     save(produtosDTO);
-
                 }
-
             }
         }
-    }
-
-    public Produtos findProduto(Long id){
-        return findByIdProduto(id);
     }
 }

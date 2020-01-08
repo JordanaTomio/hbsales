@@ -27,7 +27,7 @@ public class Funcionario {
         return nomeFuncionario;
     }
 
-    public void setNomeFuncionario(String nomeFuncionario) {
+    void setNomeFuncionario(String nomeFuncionario) {
         this.nomeFuncionario = nomeFuncionario;
     }
 
@@ -35,7 +35,7 @@ public class Funcionario {
         return emailFuncionario;
     }
 
-    public void setEmailFuncionario(String emailFuncionario) {
+    void setEmailFuncionario(String emailFuncionario) {
         this.emailFuncionario = emailFuncionario;
     }
 
@@ -43,7 +43,7 @@ public class Funcionario {
         return uuidFuncionario;
     }
 
-    public void setUuidFuncionario(String uuidFuncionario) {
+    void setUuidFuncionario(String uuidFuncionario) {
         this.uuidFuncionario = uuidFuncionario;
     }
 

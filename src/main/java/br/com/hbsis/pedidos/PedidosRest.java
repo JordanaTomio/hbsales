@@ -1,19 +1,16 @@
 package br.com.hbsis.pedidos;
 
-import br.com.hbsis.produtos.ProdutosService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
 
 @RestController
 @RequestMapping("/pedidos")
 public class PedidosRest {
     private static final Logger LOGGER = LoggerFactory.getLogger(PedidosRest.class);
-
     private final PedidosService pedidosService;
 
     @Autowired
@@ -22,14 +19,14 @@ public class PedidosRest {
     }
 
     @PostMapping
-    public PedidosDTO save(@RequestBody PedidosDTO pedidosDTO) throws ParseException {
+    public PedidosDTO save(@RequestBody PedidosDTO pedidosDTO) {
         LOGGER.info("Recebendo solicitação de persistência de pedidos...");
         LOGGER.debug("Payaload: {}", pedidosDTO);
 
         return this.pedidosService.save(pedidosDTO);
     }
     @GetMapping("/export-periodo/{id}")
-    public void exportCSVPeriodo(HttpServletResponse response, @RequestBody ProdutosService produtosService, @PathVariable("id") Long id) throws Exception {
+    public void exportCSVPeriodo(HttpServletResponse response, @PathVariable("id") Long id) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de exportação...");
 
         this.pedidosService.exportPeriodo(response, id);
@@ -37,7 +34,7 @@ public class PedidosRest {
         LOGGER.info("Exportado com sucesso...");
     }
     @GetMapping("/export-funcionario/{id}")
-    public void exportCSVFuncionario(HttpServletResponse response, @RequestBody ProdutosService produtosService, @PathVariable("id") Long id) throws Exception {
+    public void exportCSVFuncionario(HttpServletResponse response, @PathVariable("id") Long id) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de exportação...");
 
         this.pedidosService.exportFuncionario(response, id);
@@ -45,7 +42,7 @@ public class PedidosRest {
         LOGGER.info("Exportado com sucesso...");
     }
     @GetMapping("/visualiza-pedido/{id}")
-    public void visualizaPedido(@PathVariable("id") Long id) throws Exception {
+    public void visualizaPedido(@PathVariable("id") Long id) {
         LOGGER.info("Recebendo solicitação de persistência de visualização...");
 
         this.pedidosService.visualizaPedidos(id);
@@ -53,7 +50,7 @@ public class PedidosRest {
         LOGGER.info("Visualização...");
     }
     @PostMapping("/cancela-pedido/{id}")
-    public void cancelaPedido(@PathVariable("id") Long id) throws Exception {
+    public void cancelaPedido(@PathVariable("id") Long id) {
         LOGGER.info("Recebendo solicitação de persistência de cancelamento de pedido...");
 
         this.pedidosService.cancelaPedido(id);
@@ -61,7 +58,7 @@ public class PedidosRest {
         LOGGER.info("Pedido cancelado com sucesso...");
     }
     @PutMapping("/edita-pedido/{id}")
-    public void editaPedido(@PathVariable("id") Long id,  @RequestBody PedidosDTO pedidosDTO) throws Exception {
+    public void editaPedido(@PathVariable("id") Long id,  @RequestBody PedidosDTO pedidosDTO) {
         LOGGER.info("Recebendo solicitação de persistência de modificacao de pedido...");
 
         this.pedidosService.update(pedidosDTO, id);
@@ -69,7 +66,7 @@ public class PedidosRest {
         LOGGER.info("Pedido modificado com sucesso...");
     }
     @GetMapping("/retira-pedido/{id}")
-    public void retiraPedido(@PathVariable("id") Long id) throws Exception {
+    public void retiraPedido(@PathVariable("id") Long id) {
         LOGGER.info("Recebendo solicitação de persistência de retirada de pedido...");
 
         this.pedidosService.retiraPedido(id);
