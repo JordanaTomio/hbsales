@@ -32,7 +32,7 @@ public class CategoriaRest {
     public void importCSV(@RequestParam("file") MultipartFile file) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de importação...");
 
-        this.categoriaService.Import(file);
+        this.categoriaService.importCategoria(file);
 
         LOGGER.info("Importado com sucesso...");
 
@@ -42,7 +42,7 @@ public class CategoriaRest {
     public void exportCSV(HttpServletResponse response, @RequestBody CategoriaService categoriaService) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de exportação...");
 
-        this.categoriaService.Export(response);
+        this.categoriaService.exportCategoria(response);
 
         LOGGER.info("Exportado com sucesso...");
     }

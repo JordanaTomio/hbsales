@@ -103,12 +103,15 @@ public class ProdutosService {
             LOGGER.debug("Payload: {}", produtosDTO);
             LOGGER.debug("Produto existente: {}", produtoExistente);
 
+            String x = produtosDTO.getCodigo();
+            String codigoZero = StringUtils.leftPad(x, 10, "0");
+
             produtoExistente.setNome(produtosDTO.getNome());
             produtoExistente.setValidade(produtosDTO.getValidade());
             produtoExistente.setUnidadeCaixa(produtosDTO.getUnidadeCaixa());
             produtoExistente.setPreco(produtosDTO.getPreco());
             produtoExistente.setPesoUnidade(produtosDTO.getPesoUnidade());
-            produtoExistente.setCodigo(produtosDTO.getCodigo());
+            produtoExistente.setCodigo(codigoZero);
             produtoExistente.setUnidadeMedida(produtosDTO.getUnidadeMedida());
 
             new LinhaCategoria();
@@ -134,7 +137,7 @@ public class ProdutosService {
         return iProdutosRepository.findAll();
     }
 
-    public void exportProdutos(HttpServletResponse response) throws IOException, ParseException {
+    void exportProdutos(HttpServletResponse response) throws IOException, ParseException {
         String nomearquivo = "exportandoProdutos.csv";
         response.setContentType("text/csv");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
@@ -182,7 +185,7 @@ public class ProdutosService {
         }
     }
 
-    public void importProdutos(MultipartFile file) throws IOException {
+    void importProdutos(MultipartFile file) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
 
         reader.readLine();
@@ -192,7 +195,6 @@ public class ProdutosService {
         while ((line = reader.readLine()) != null) {
             String[] categoria = line.split(splitBy);
             String peso = categoria[5].replaceAll("[^0-9.]", "");
-            String pesoForm = peso.substring(0, peso.length() - 1);
             String medida = categoria[5].replaceAll("[0-9]", "");
             String medidaForm = medida.replace(".", "");
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -211,11 +213,12 @@ public class ProdutosService {
             produtosDTO.setNome(categoria[1]);
             produtosDTO.setPreco(Float.parseFloat(precoFormatado));
             produtosDTO.setUnidadeCaixa(Integer.parseInt(uniCaixa));
-            produtosDTO.setPesoUnidade(Float.parseFloat(pesoForm));
+            produtosDTO.setPesoUnidade(Float.parseFloat(peso));
             produtosDTO.setValidade(validade);
             produtosDTO.setUnidadeMedida(medidaForm);
 
-            LinhaCategoria linhaCompleta = new LinhaCategoria();
+            new LinhaCategoria();
+            LinhaCategoria linhaCompleta;
             linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codigoForm);
             Long idLinha = linhaCompleta.getId();
 
@@ -236,7 +239,7 @@ public class ProdutosService {
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
-    public void importFornecedor(Long id, MultipartFile file) throws IOException {
+    void importFornecedor(Long id, MultipartFile file) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
 
         if (fornecedorService.existsByIdFornecedor(id)) {
@@ -255,6 +258,8 @@ public class ProdutosService {
                 String[] categoria = line.split(splitBy);
                 String peso = categoria[5].replaceAll("[^0-9.]", "");
                 String medida = categoria[5].replaceAll("[0-9]", "");
+                String unidadeCaixa = categoria[4].replace("0", "");
+                String uniCaixa = unidadeCaixa.replace(".", "");
 
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 String dateString = categoria[6];
@@ -269,12 +274,13 @@ public class ProdutosService {
                 produtosDTO.setNome(categoria[1]);
                 produtosDTO.setCodigo(categoria[2]);
                 produtosDTO.setPreco(Float.parseFloat(precoFormatado));
-                produtosDTO.setUnidadeCaixa(Integer.parseInt(categoria[4]));
+                produtosDTO.setUnidadeCaixa(Integer.parseInt(uniCaixa));
                 produtosDTO.setPesoUnidade(Float.parseFloat(peso));
                 produtosDTO.setValidade(validade);
                 produtosDTO.setUnidadeMedida(medida);
 
                 String codigoLinha = categoria[7];
+                String codLinhaForm = codigoLinha.replaceAll("'", "");
                 String nomeLinha = categoria[8];
                 String codigoCategoria = categoria[9];
                 String nomeCategoria = categoria[10];
@@ -292,29 +298,30 @@ public class ProdutosService {
                     categoriaDTO.setIdFornecedor(idFornecedor);
                     categoriaDTO.setNome(nomeCategoria);
                     categoriaService.save(categoriaDTO);
-                } if (!linhaCategoriaService.existsByLinhaCodigo(codigoLinha)) {
+
+                } if (!linhaCategoriaService.existsByLinhaCodigo(codLinhaForm)) {
                     LinhaCategoriaDTO linha_categoriaDTO = new LinhaCategoriaDTO();
                     LOGGER.info("Linha de Categoria não existente, criando nova...");
 
                     categoriaCompleta = categoriaService.findCategoriaNomeECodigo(nomeCategoria, codigoCategoria);
                     Long idCategoria = categoriaCompleta.getId();
 
-                    linha_categoriaDTO.setCodigoLinha(codigoLinha);
+                    linha_categoriaDTO.setCodigoLinha(codLinhaForm);
                     linha_categoriaDTO.setCategoria(idCategoria);
                     linha_categoriaDTO.setNomeLinha(nomeLinha);
                     linhaCategoriaService.save(linha_categoriaDTO);
 
                 } else {
                     LinhaCategoriaDTO linha_categoriaDTO = new LinhaCategoriaDTO();
-                    linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codigoLinha);
+                    linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codLinhaForm);
                     Long idCategoria = linhaCompleta.getId();
 
-                    linha_categoriaDTO.setCodigoLinha(codigoLinha);
+                    linha_categoriaDTO.setCodigoLinha(codLinhaForm);
                     linha_categoriaDTO.setCategoria(idCategoria);
                     linha_categoriaDTO.setNomeLinha(nomeLinha);
                     linhaCategoriaService.update(linha_categoriaDTO, idCategoria);
                 }
-                linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codigoLinha);
+                linhaCompleta = linhaCategoriaService.findByCodigoLinhaCategoria(codLinhaForm);
                 Long idLinha = linhaCompleta.getId();
                 produtosDTO.setIdLinha(idLinha);
 

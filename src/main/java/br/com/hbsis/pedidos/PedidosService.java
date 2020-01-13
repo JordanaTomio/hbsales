@@ -262,10 +262,12 @@ public class PedidosService {
         pedidos = this.findById(id);
 
         if (pedidos.getStatus().equals(StatusName.ATIVO) || pedidos.getStatus().equals(StatusName.RETIRADO)) {
-            if (pedidos.getPeriodo().getInicioVendas().isBefore(LocalDate.now().plusDays(1)) && pedidos.getPeriodo().getFimVendas().isAfter(LocalDate.now())) {
+            if (pedidos.getPeriodo().getInicioVendas().isBefore(LocalDate.now()) || pedidos.getPeriodo().getInicioVendas().isEqual(LocalDate.now()) && pedidos.getPeriodo().getFimVendas().isAfter(LocalDate.now()) || pedidos.getPeriodo().getFimVendas().isEqual(LocalDate.now())) {
                 pedidos.setStatus(StatusName.CANCELADO);
                 this.update(PedidosDTO.of(pedidos), id);
             }
+        } else {
+            throw new IllegalArgumentException("Não foi possível cancelar este pedido");
         }
     }
 
@@ -276,7 +278,7 @@ public class PedidosService {
     public PedidosDTO update(PedidosDTO pedidosDTO, Long id) {
         Optional<Pedidos> pedidoExistenteOptional = this.iPedidosRepository.findById(id);
 
-        this.validateUpdate(id);
+        this.validateUp(id);
 
         if (pedidoExistenteOptional.isPresent()) {
             Pedidos pedidoExiste = pedidoExistenteOptional.get();
@@ -317,13 +319,13 @@ public class PedidosService {
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
-    private void validateUpdate(Long id) {
+    private void validateUp(Long id) {
         new Pedidos();
         Pedidos pedidos;
         pedidos = this.findById(id);
 
-        if (pedidos.getStatus().equals(StatusName.ATIVO) || pedidos.getStatus().equals(StatusName.RETIRADO)) {
-            if (pedidos.getPeriodo().getInicioVendas().isBefore(LocalDate.now().plusDays(1)) && pedidos.getPeriodo().getFimVendas().isAfter(LocalDate.now())) {
+        if (pedidos.getStatus().equals(StatusName.ATIVO)) {
+            if (pedidos.getPeriodo().getInicioVendas().isBefore(LocalDate.now()) && pedidos.getPeriodo().getFimVendas().isAfter(LocalDate.now())) {
                 LOGGER.info("Pedido válido!");
             } else {
                 throw new IllegalArgumentException("Modificacao nao foi possivel pois pedido nao atende a todos os requisitos");
@@ -335,11 +337,10 @@ public class PedidosService {
         new Pedidos();
         Pedidos pedidos;
         pedidos = this.findById(id);
-        if (pedidos.getPeriodo().getRetiradaPedido().toString().equals(LocalDate.now().toString())) {
+        if (pedidos.getPeriodo().getRetiradaPedido().toString().equals(LocalDate.now().plusDays(8).toString())) {
             if (pedidos.getStatus().equals(StatusName.ATIVO)) {
                 pedidos.setStatus(StatusName.RETIRADO);
                 this.update(PedidosDTO.of(pedidos), id);
-                LOGGER.info("Pedido retirado com sucesso!");
             } else {
                 throw new IllegalArgumentException("Pedido não está ativo");
             }

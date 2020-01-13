@@ -44,9 +44,11 @@ public class PedidosRest {
     @GetMapping("/visualiza-pedido/{id}")
     public void visualizaPedido(@PathVariable("id") Long id) {
         LOGGER.info("Recebendo solicitação de persistência de visualização...");
+        LOGGER.info("|--------------------------------------------------------------------------------------------------------|");
 
         this.pedidosService.visualizaPedidos(id);
 
+        LOGGER.info("|--------------------------------------------------------------------------------------------------------|");
         LOGGER.info("Visualização...");
     }
     @PostMapping("/cancela-pedido/{id}")

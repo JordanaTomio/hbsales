@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class FornecedorService {
@@ -60,6 +62,14 @@ public class FornecedorService {
         if (StringUtils.isEmpty(fornecedorDTO.getEndereco())) {
             throw new IllegalArgumentException("Endereco não deve ser nulo/vazio");
         }
+
+        Pattern pattern = Pattern.compile("[^A-Za-z0-9]");
+        Matcher matcher = pattern.matcher(fornecedorDTO.getTelefone());
+        boolean existeChar = matcher.find();
+        if(existeChar || fornecedorDTO.getTelefone().contains("(") || fornecedorDTO.getTelefone().contains(")")){
+            throw new IllegalArgumentException("Telefone não deve conter caracteres especiais");
+        }
+
     }
 
     public FornecedorDTO findById(Long id) {

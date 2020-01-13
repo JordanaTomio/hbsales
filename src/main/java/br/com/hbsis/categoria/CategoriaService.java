@@ -55,9 +55,15 @@ public class CategoriaService {
         String cnpjPronto = cnpj.substring(10);
 
         String x = categoriaDTO.getCodigo();
-        String codigoZero = StringUtils.leftPad(x, 3, "0");
-        String codigo = "CAT" + cnpjPronto + codigoZero;
-        categoria.setCodigo(codigo);
+
+        if (x.length() < 10){
+            String codigoZero = StringUtils.leftPad(x, 3, "0");
+            String codigo = "CAT" + cnpjPronto + codigoZero;
+            categoria.setCodigo(codigo);
+        } else {
+            categoria.setCodigo(x);
+        }
+
         categoria = this.iCategoriaRepository.save(categoria);
 
         return CategoriaDTO.of(categoria);
@@ -134,7 +140,7 @@ public class CategoriaService {
         return iCategoriaRepository.findAll();
     }
 
-    void Export(HttpServletResponse response) throws IOException, ParseException {
+    void exportCategoria(HttpServletResponse response) throws IOException, ParseException {
 
         String nomearquivo = "exportando.csv";
         response.setContentType("text/csv");
@@ -162,7 +168,7 @@ public class CategoriaService {
         }
     }
 
-    void Import(MultipartFile file) throws IOException {
+    void importCategoria(MultipartFile file) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
 
         reader.readLine();

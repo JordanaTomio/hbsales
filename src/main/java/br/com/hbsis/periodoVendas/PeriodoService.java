@@ -23,19 +23,17 @@ public class PeriodoService {
     }
 
     public PeriodoDTO save(PeriodoDTO periodoDTO) {
-
+        Periodo periodo = new Periodo();
         this.validate(periodoDTO);
 
         LOGGER.info("Salvando período de vendas");
         LOGGER.debug("Período de Vendas: {}", periodoDTO);
 
-        Periodo periodo = new Periodo();
-
         periodo.setId(periodoDTO.getId());
         periodo.setInicioVendas(periodoDTO.getInicioVendas());
         periodo.setFimVendas(periodoDTO.getFimVendas());
         periodo.setDescricao(periodoDTO.getDescricao());
-        periodo.setRetiradaPedido(periodoDTO.getRetiradaPedido());
+        periodo.setRetiradaPedido(periodoDTO.getFimVendas().plusDays(1));
 
         new Fornecedor();
         Fornecedor fornecedorCompleto;
@@ -92,7 +90,6 @@ public class PeriodoService {
         }
 
     }
-
 
     public PeriodoDTO update(PeriodoDTO periodoDTO, Long id) {
         Optional<Periodo> periodoExistenteOptional = this.iPeriodoRepository.findById(id);

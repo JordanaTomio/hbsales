@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,8 +100,11 @@ public class LinhaCategoriaService {
             LOGGER.debug("Payload: {}", linha_categoriaDTO);
             LOGGER.debug("Linha existente: {}", linhaExistente);
 
+            String x = linha_categoriaDTO.getCodigoLinha();
+            String codigoZero = StringUtils.leftPad(x, 10, "0");
+
             linhaExistente.setNomeLinha(linha_categoriaDTO.getNomeLinha());
-            linhaExistente.setCodigoLinha(linha_categoriaDTO.getCodigoLinha());
+            linhaExistente.setCodigoLinha(codigoZero);
             categoriaCompleta = categoriaService.findByIdCategoria(linha_categoriaDTO.getCategoria());
             linhaExistente.setCategoria(categoriaCompleta);
 
@@ -138,7 +144,8 @@ public class LinhaCategoriaService {
         String[] headerCSV = {"id_linha", "codigo_categoria", "nome_categoria", "codigo", "nome_linha"};
         cvs.writeNext(headerCSV);
         for (LinhaCategoria linha : findAll()) {
-            cvs.writeNext(new String[]{linha.getId().toString(), linha.getCategoria().getCodigo(), linha.getCategoria().getNome(), linha.getCodigoLinha(), linha.getNomeLinha()});
+            String codigoLinha = "'" + linha.getCodigoLinha();
+            cvs.writeNext(new String[]{linha.getId().toString(), linha.getCategoria().getCodigo(), linha.getCategoria().getNome(), codigoLinha, linha.getNomeLinha()});
         }
     }
 
@@ -156,13 +163,14 @@ public class LinhaCategoriaService {
 
             linhaDTO.setId(Long.parseLong(categoria[0]));
             String codigoCat = categoria[1];
-            String nomeCat = categoria[2];
+            String nomeCat = categoria[2].replaceAll("'", "");
+            String codigoLinha = categoria[3].replaceAll("'", "");
 
             Categoria categoriaCompleto = categoriaService.findCategoriaNomeECodigo(nomeCat, codigoCat);
             Long idCategoria = categoriaCompleto.getId();
             linhaDTO.setCategoria(idCategoria);
 
-            linhaDTO.setCodigoLinha(categoria[3]);
+            linhaDTO.setCodigoLinha(codigoLinha);
             linhaDTO.setNomeLinha(categoria[4]);
 
             save(linhaDTO);

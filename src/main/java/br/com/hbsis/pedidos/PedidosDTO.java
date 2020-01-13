@@ -3,17 +3,16 @@ package br.com.hbsis.pedidos;
 import java.time.LocalDate;
 
 public class PedidosDTO {
-    private  Long id;
+    private Long id;
+    private Long idFornecedor;
+    private Long idPeriodo;
+    private Long produto;
+    private Long idFuncionario;
     private String codigo;
     private StatusName status;
     private LocalDate dataCriacao;
-    private Long idFornecedor;
-    private Long idPeriodo;
     private double valorTotal;
-    private Long idFuncionario;
     private Integer quantidade;
-    private Long produto;
-
 
     public PedidosDTO(Long id, String codigo, StatusName status, LocalDate dataCriacao, Long idFornecedor, Long idPeriodo, double valorTotal, Long idFuncionario, Integer quantidade, Long produto) {
         this.id = id;
