@@ -1,10 +1,10 @@
 package br.com.hbsis.funcionario;
 
-public class EmployeeSavingDTO {
+public class EmployeeDTO {
     private String employeeName;
     private String employeeUuid;
 
-    public EmployeeSavingDTO() {
+    public EmployeeDTO() {
     }
 
     public String getEmployeeName() {

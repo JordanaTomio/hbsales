@@ -1,9 +1,6 @@
 package br.com.hbsis.produtos;
 
-import org.apache.tomcat.jni.Local;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class ProdutosDTO {
     private Long id;
@@ -29,7 +26,6 @@ public class ProdutosDTO {
     }
 
     public ProdutosDTO() {
-
     }
 
     public static ProdutosDTO of(Produtos produtos) {
@@ -39,7 +35,7 @@ public class ProdutosDTO {
                 produtos.getNome(),
                 produtos.getCodigo(),
                 produtos.getPreco(),
-                (int) produtos.getUnidadeCaixa(),
+                produtos.getUnidadeCaixa(),
                 produtos.getPesoUnidade(),
                 produtos.getValidade(),
                 produtos.getUnidadeMedida()

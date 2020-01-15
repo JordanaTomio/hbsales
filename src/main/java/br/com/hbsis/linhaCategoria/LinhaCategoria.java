@@ -1,5 +1,4 @@
-package br.com.hbsis.linha_categoria;
-
+package br.com.hbsis.linhaCategoria;
 
 import br.com.hbsis.categoria.Categoria;
 
@@ -7,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Table (name = "seg_linhas")
-public class Linha_categoria {
+public class LinhaCategoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

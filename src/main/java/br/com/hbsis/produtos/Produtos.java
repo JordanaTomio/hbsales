@@ -1,37 +1,36 @@
 package br.com.hbsis.produtos;
 
 //iniciado 2:05
-import br.com.hbsis.linha_categoria.Linha_categoria;
+
+import br.com.hbsis.linhaCategoria.LinhaCategoria;
+
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "seg_produtos")
 public class Produtos {
-   @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private Long id;
-   @Column(name = "nome", nullable = false, length = 100)
-   private String nome;
-   @Column(name = "codigo", nullable = false, length = 10)
-   private String codigo;
-   @Column(name = "preco", nullable = false, length = 20)
-   private double preco;
-   @Column(name = "unidade_caixa", nullable = false)
-   private Integer unidadeCaixa;
-   @Column(name = "peso_unidade", nullable = false, length = 20)
-   private double pesoUnidade;
-   @Column(name = "validade", nullable = false, length = 10)
-   private LocalDate validade;
-   @Column(name = "unidade_medida", nullable = false, length = 3)
-   private String unidadeMedida;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "nome", nullable = false, length = 100)
+    private String nome;
+    @Column(name = "codigo", nullable = false, length = 10)
+    private String codigo;
+    @Column(name = "preco", nullable = false, length = 20)
+    private double preco;
+    @Column(name = "unidade_caixa", nullable = false)
+    private Integer unidadeCaixa;
+    @Column(name = "peso_unidade", nullable = false, length = 20)
+    private double pesoUnidade;
+    @Column(name = "validade", nullable = false, length = 10)
+    private LocalDate validade;
+    @Column(name = "unidade_medida", nullable = false, length = 3)
+    private String unidadeMedida;
 
-
-   @ManyToOne
-   @JoinColumn(name = "id_categoria", referencedColumnName = "id")
-   private Linha_categoria linha;
+    @ManyToOne
+    @JoinColumn(name = "id_categoria", referencedColumnName = "id")
+    private LinhaCategoria linha;
 
     public Long getId() {
         return id;
@@ -97,11 +96,11 @@ public class Produtos {
         this.unidadeMedida = unidadeMedida;
     }
 
-    public Linha_categoria getLinha() {
+    public LinhaCategoria getLinha() {
         return linha;
     }
 
-    public void setLinha(Linha_categoria linha) {
+    public void setLinha(LinhaCategoria linha) {
         this.linha = linha;
     }
 

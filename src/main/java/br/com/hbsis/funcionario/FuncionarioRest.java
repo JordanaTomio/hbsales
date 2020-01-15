@@ -1,7 +1,7 @@
 package br.com.hbsis.funcionario;
 
-import com.sun.org.slf4j.internal.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,8 +22,8 @@ public class FuncionarioRest {
 
     @PostMapping
     public FuncionarioDTO save(@RequestBody FuncionarioDTO funcionarioDTO) {
-        LOGGER.info("Recebendo solicitação de persistência de cadastro de funcionários...");
-        LOGGER.debug("Payaload: {}", funcionarioDTO);
+       LOGGER.info("Recebendo solicitação de persistência de cadastro de funcionários...");
+       LOGGER.debug("Payaload: {}", funcionarioDTO);
 
         return this.funcionarioService.save(funcionarioDTO);
     }

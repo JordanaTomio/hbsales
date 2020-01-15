@@ -2,52 +2,41 @@ package br.com.hbsis.periodoVendas;
 
 import br.com.hbsis.fornecedor.Fornecedor;
 import br.com.hbsis.fornecedor.FornecedorService;
-import br.com.hbsis.fornecedor.IFornecedorRepository;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PeriodoService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PeriodoService.class);
-
-    private final IFornecedorRepository iFornecedorRepository;
     private final FornecedorService fornecedorService;
     private final IPeriodoRepository iPeriodoRepository;
 
-    public PeriodoService(IFornecedorRepository iFornecedorRepository, FornecedorService fornecedorService, IPeriodoRepository iPeriodoRepository) {
-        this.iFornecedorRepository = iFornecedorRepository;
+    public PeriodoService(FornecedorService fornecedorService, IPeriodoRepository iPeriodoRepository) {
         this.fornecedorService = fornecedorService;
         this.iPeriodoRepository = iPeriodoRepository;
     }
 
-
     public PeriodoDTO save(PeriodoDTO periodoDTO) {
-
+        Periodo periodo = new Periodo();
         this.validate(periodoDTO);
 
         LOGGER.info("Salvando período de vendas");
         LOGGER.debug("Período de Vendas: {}", periodoDTO);
 
-        Periodo periodo = new Periodo();
-
         periodo.setId(periodoDTO.getId());
         periodo.setInicioVendas(periodoDTO.getInicioVendas());
         periodo.setFimVendas(periodoDTO.getFimVendas());
         periodo.setDescricao(periodoDTO.getDescricao());
-        periodo.setRetiradaPedido(periodoDTO.getRetiradaPedido());
+        periodo.setRetiradaPedido(periodoDTO.getFimVendas().plusDays(1));
 
-        Fornecedor fornecedorCompleto = new Fornecedor();
+        new Fornecedor();
+        Fornecedor fornecedorCompleto;
         fornecedorCompleto = fornecedorService.findByIdFornecedor(periodoDTO.getIdFornecedor());
         periodo.setFornecedor(fornecedorCompleto);
 
@@ -56,7 +45,7 @@ public class PeriodoService {
         return PeriodoDTO.of(periodo);
     }
 
-    public List<Periodo> findAll() {
+    private List<Periodo> findAll() {
         return iPeriodoRepository.findAll();
     }
 
@@ -102,16 +91,6 @@ public class PeriodoService {
 
     }
 
-    public PeriodoDTO findById(Long id) {
-        Optional<Periodo> periodoOptional = this.iPeriodoRepository.findById(id);
-
-        if (periodoOptional.isPresent()) {
-            return PeriodoDTO.of(periodoOptional.get());
-        }
-
-        throw new IllegalArgumentException(String.format("ID %s não existe", id));
-    }
-
     public PeriodoDTO update(PeriodoDTO periodoDTO, Long id) {
         Optional<Periodo> periodoExistenteOptional = this.iPeriodoRepository.findById(id);
 
@@ -127,16 +106,15 @@ public class PeriodoService {
                 throw new IllegalArgumentException("Um Período de Vendas não pode ser mais alterado após o término de sua vigência");
             }
 
-
             periodoExistente.setInicioVendas(periodoDTO.getInicioVendas());
             periodoExistente.setFimVendas(periodoDTO.getFimVendas());
             periodoExistente.setDescricao(periodoDTO.getDescricao());
             periodoExistente.setRetiradaPedido(periodoDTO.getRetiradaPedido());
 
-            Fornecedor fornecedorCompleto = new Fornecedor();
+            new Fornecedor();
+            Fornecedor fornecedorCompleto;
             fornecedorCompleto = fornecedorService.findByIdFornecedor(periodoDTO.getIdFornecedor());
             periodoExistente.setFornecedor(fornecedorCompleto);
-
 
             periodoExistente = this.iPeriodoRepository.save(periodoExistente);
 
@@ -162,6 +140,4 @@ public class PeriodoService {
 
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
-
-
 }

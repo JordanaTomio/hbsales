@@ -1,10 +1,10 @@
 package br.com.hbsis.funcionario;
 
 public class FuncionarioDTO {
-    Long id;
-    String nome;
-    String email;
-    String uuid;
+   private Long id;
+   private String nome;
+   private String email;
+   private String uuid;
 
     public FuncionarioDTO(Long id, String nome, String email, String uuid) {
         this.id = id;
@@ -16,9 +16,9 @@ public class FuncionarioDTO {
     public static FuncionarioDTO of(Funcionario funcionario) {
         return new FuncionarioDTO(
                 funcionario.getId(),
-                funcionario.getNomeFuncionario(),
-                funcionario.getEmailFuncionario(),
-                funcionario.getUuidFuncionario()
+                funcionario.getNome(),
+                funcionario.getEmail(),
+                funcionario.getUuid()
         );
     }
 

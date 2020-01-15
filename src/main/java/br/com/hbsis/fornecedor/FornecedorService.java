@@ -1,30 +1,25 @@
 package br.com.hbsis.fornecedor;
 
+import br.com.hbsis.categoria.AlterarCodigo;
 import com.microsoft.sqlserver.jdbc.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.util.Date;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class FornecedorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FornecedorService.class);
-
     private final IFornecedorRepository iFornecedorRepository;
+    private final AlterarCodigo alterarCodigo;
 
-
-    @Autowired
-    public FornecedorService(IFornecedorRepository iFornecedorRepository) {
-
+    public FornecedorService(IFornecedorRepository iFornecedorRepository, AlterarCodigo alterarCodigo) {
         this.iFornecedorRepository = iFornecedorRepository;
+        this.alterarCodigo = alterarCodigo;
     }
-
 
     public FornecedorDTO save(FornecedorDTO fornecedorDTO) {
 
@@ -35,7 +30,7 @@ public class FornecedorService {
 
         Fornecedor fornecedor = new Fornecedor();
         fornecedor.setCnpj(fornecedorDTO.getCnpj());
-        fornecedor.setNomefantasia(fornecedorDTO.getNomefantasia());
+        fornecedor.setNomeFantasia(fornecedorDTO.getNomeFantasia());
         fornecedor.setEmail(fornecedorDTO.getEmail());
         fornecedor.setEndereco(fornecedorDTO.getEndereco());
         fornecedor.setRazao(fornecedorDTO.getRazao());
@@ -61,9 +56,20 @@ public class FornecedorService {
             throw new IllegalArgumentException("CNPJ não deve ter menos do que 14 digitos");
         }
 
-        if (StringUtils.isEmpty(fornecedorDTO.getNomefantasia())) {
+        if (StringUtils.isEmpty(fornecedorDTO.getNomeFantasia())) {
             throw new IllegalArgumentException("Nome não deve ser nulo/vazio");
         }
+        if (StringUtils.isEmpty(fornecedorDTO.getEndereco())) {
+            throw new IllegalArgumentException("Endereco não deve ser nulo/vazio");
+        }
+
+        Pattern pattern = Pattern.compile("[^A-Za-z0-9]");
+        Matcher matcher = pattern.matcher(fornecedorDTO.getTelefone());
+        boolean existeChar = matcher.find();
+        if(existeChar || fornecedorDTO.getTelefone().contains("(") || fornecedorDTO.getTelefone().contains(")")){
+            throw new IllegalArgumentException("Telefone não deve conter caracteres especiais");
+        }
+
     }
 
     public FornecedorDTO findById(Long id) {
@@ -98,24 +104,34 @@ public class FornecedorService {
             LOGGER.debug("Fornecedor Existente: {}", fornecedorExistente);
 
             fornecedorExistente.setCnpj(fornecedorDTO.getCnpj());
-            fornecedorExistente.setNomefantasia(fornecedorDTO.getNomefantasia());
-
+            fornecedorExistente.setNomeFantasia(fornecedorDTO.getNomeFantasia());
+            fornecedorExistente.setTelefone(fornecedorDTO.getTelefone());
+            fornecedorExistente.setRazao(fornecedorDTO.getRazao());
+            fornecedorExistente.setEmail(fornecedorDTO.getEmail());
+            fornecedorExistente.setEndereco(fornecedorDTO.getEndereco());
+            alterarCodigo.alteraCategoria(fornecedorExistente);
             fornecedorExistente = this.iFornecedorRepository.save(fornecedorExistente);
 
             return FornecedorDTO.of(fornecedorExistente);
         }
-
 
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
 
     public void delete(Long id) {
-
         LOGGER.info("Executando delete para fornecedor de ID: [{}]", id);
 
         this.iFornecedorRepository.deleteById(id);
     }
 
+    public Fornecedor findFornecedor(String cnpj, String razao) {
+        iFornecedorRepository.findByCnpjAndRazao(cnpj, razao);
+        return iFornecedorRepository.findByCnpjAndRazao(cnpj, razao);
+    }
 
+    public boolean existsByIdFornecedor(Long id) {
+        iFornecedorRepository.existsById(id);
+        return iFornecedorRepository.existsById(id);
+    }
 }

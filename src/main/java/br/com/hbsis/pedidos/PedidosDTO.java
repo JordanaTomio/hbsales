@@ -1,30 +1,33 @@
-package br.com.hbsis.Pedidos;
-
-import br.com.hbsis.item.Item;
-import br.com.hbsis.produtos.Produtos;
+package br.com.hbsis.pedidos;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class PedidosDTO {
-    private  Long id;
+    private Long id;
+    private Long idFornecedor;
+    private Long idPeriodo;
+    private Long produto;
+    private Long idFuncionario;
     private String codigo;
     private StatusName status;
     private LocalDate dataCriacao;
-    private Long idFornecedor;
-    private Long idPeriodo;
-    private List<Produtos> produtos;
     private double valorTotal;
+    private Integer quantidade;
 
-    public PedidosDTO(Long id, String codigo, StatusName status, LocalDate dataCriacao, Long idFornecedor, Long idPeriodo, List<Produtos> produtos, double valorTotal) {
+    public PedidosDTO(Long id, String codigo, StatusName status, LocalDate dataCriacao, Long idFornecedor, Long idPeriodo, double valorTotal, Long idFuncionario, Integer quantidade, Long produto) {
         this.id = id;
         this.codigo = codigo;
         this.status = status;
         this.dataCriacao = dataCriacao;
         this.idFornecedor = idFornecedor;
         this.idPeriodo = idPeriodo;
-        this.produtos = produtos;
         this.valorTotal = valorTotal;
+        this.idFuncionario = idFuncionario;
+        this.quantidade = quantidade;
+        this.produto = produto;
+    }
+
+    public PedidosDTO() {
     }
 
     public static PedidosDTO of(Pedidos pedidos) {
@@ -35,8 +38,11 @@ public class PedidosDTO {
                 pedidos.getDataCriacao(),
                 pedidos.getFornecedor().getId(),
                 pedidos.getPeriodo().getId(),
-                pedidos.getProdutos(),
-                pedidos.getValorTotal()
+                pedidos.getValorTotal(),
+                pedidos.getFuncionario().getId(),
+                pedidos.getQuantidade(),
+                pedidos.getProduto().getId()
+
         );
     }
 
@@ -88,20 +94,36 @@ public class PedidosDTO {
         this.idPeriodo = idPeriodo;
     }
 
-    public List<Produtos> getProdutos() {
-        return produtos;
-    }
-
-    public void setProdutos(List<Produtos> produtos) {
-        this.produtos = produtos;
-    }
-
     public double getValorTotal() {
         return valorTotal;
     }
 
     public void setValorTotal(double valorTotal) {
         this.valorTotal = valorTotal;
+    }
+
+    public Long getIdFuncionario() {
+        return idFuncionario;
+    }
+
+    public void setIdFuncionario(Long idFuncionario) {
+        this.idFuncionario = idFuncionario;
+    }
+
+    public Integer getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public Long getProduto() {
+        return produto;
+    }
+
+    public void setProduto(Long produto) {
+        this.produto = produto;
     }
 
     @Override
@@ -113,8 +135,10 @@ public class PedidosDTO {
                 ", dataCriacao=" + dataCriacao +
                 ", idFornecedor=" + idFornecedor +
                 ", idPeriodo=" + idPeriodo +
-                ", produtos=" + produtos +
                 ", valorTotal=" + valorTotal +
+                ", idFuncionario=" + idFuncionario +
+                ", quantidade=" + quantidade +
+                ", produto=" + produto +
                 '}';
     }
 }

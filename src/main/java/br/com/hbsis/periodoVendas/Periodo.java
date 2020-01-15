@@ -4,25 +4,24 @@ import br.com.hbsis.fornecedor.Fornecedor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "seg_periodo")
 public class Periodo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Column(name = "inicio_vendas", nullable = false)
-    LocalDate inicioVendas;
+    private LocalDate inicioVendas;
     @Column(name = "fim_vendas", nullable = false)
-    LocalDate fimVendas;
+    private LocalDate fimVendas;
     @Column(name = "retirada_pedido", nullable = false)
-    LocalDate retiradaPedido;
+    private LocalDate retiradaPedido;
     @Column(name = "descricao", nullable = false, length = 50)
-    String descricao;
+    private String descricao;
     @ManyToOne
     @JoinColumn(name = "id_fornecedor", referencedColumnName = "id")
-    Fornecedor fornecedor;
+    private Fornecedor fornecedor;
 
     public Long getId() {
         return id;

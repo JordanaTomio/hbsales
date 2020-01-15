@@ -1,25 +1,23 @@
-package br.com.hbsis.linha_categoria;
+package br.com.hbsis.linhaCategoria;
 
-public class Linha_categoriaDTO {
+public class LinhaCategoriaDTO {
     private Long id;
     private Long categoria;
     private String nomeLinha;
     private String codigoLinha;
 
-
-    public Linha_categoriaDTO(Long id, Long categoriaId, String nomeLinha, String codigoLinha) {
+    public LinhaCategoriaDTO(Long id, Long categoriaId, String nomeLinha, String codigoLinha) {
         this.id = id;
         this.categoria = categoriaId;
         this.nomeLinha = nomeLinha;
         this.codigoLinha = codigoLinha;
     }
 
-    public Linha_categoriaDTO() {
-
+    public LinhaCategoriaDTO() {
     }
 
-    public static Linha_categoriaDTO of(Linha_categoria linha_categoria) {
-        return new Linha_categoriaDTO(
+    public static LinhaCategoriaDTO of(LinhaCategoria linha_categoria) {
+        return new LinhaCategoriaDTO(
                 linha_categoria.getId(),
                 linha_categoria.getCategoria().getId(),
                 linha_categoria.getNomeLinha(),

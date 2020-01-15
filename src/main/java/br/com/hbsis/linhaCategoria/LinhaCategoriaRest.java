@@ -1,59 +1,59 @@
-package br.com.hbsis.linha_categoria;
+package br.com.hbsis.linhaCategoria;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
 
 @RestController
 @RequestMapping("/linhas")
-public class Linha_categoriaRest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Linha_categoriaRest.class);
-
-    private final Linha_categoriaService linha_categoriaService;
+public class LinhaCategoriaRest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LinhaCategoriaRest.class);
+    private final LinhaCategoriaService linha_categoriaService;
 
     @Autowired
-    public Linha_categoriaRest(Linha_categoriaService linha_categoriaService) {
+    public LinhaCategoriaRest(LinhaCategoriaService linha_categoriaService) {
         this.linha_categoriaService = linha_categoriaService;
     }
     @PostMapping
-    public Linha_categoriaDTO save(@RequestBody Linha_categoriaDTO linha_categoriaDTO) {
+    public LinhaCategoriaDTO save(@RequestBody LinhaCategoriaDTO linha_categoriaDTO) {
         LOGGER.info("Recebendo solicitação de persistência de linha de categoria...");
         LOGGER.debug("Payaload: {}", linha_categoriaDTO);
 
         return this.linha_categoriaService.save(linha_categoriaDTO);
     }
+
     @PostMapping("/import-csv")
-    public void importCSV() throws Exception {
+    public void importCSV(@RequestParam("file") MultipartFile file) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de importação...");
 
-        this.linha_categoriaService.Import();
+        this.linha_categoriaService.importCategoria(file);
 
         LOGGER.info("Importado com sucesso...");
-
     }
 
     @GetMapping("/export-csv")
-    public void exportCSV(HttpServletResponse response, @RequestBody Linha_categoriaService linha_categoriaService) throws Exception {
+    public void exportCSV(HttpServletResponse response, @RequestBody LinhaCategoriaService linha_categoriaService) throws Exception {
         LOGGER.info("Recebendo solicitação de persistência de exportação...");
 
-        this.linha_categoriaService.Export(response);
+        this.linha_categoriaService.export(response);
 
         LOGGER.info("Exportado com sucesso...");
     }
 
-
     @PutMapping("/{id}")
-    public Linha_categoriaDTO udpate(@PathVariable("id") Long id, @RequestBody Linha_categoriaDTO linha_categoriaDTO) {
+    public LinhaCategoriaDTO udpate(@PathVariable("id") Long id, @RequestBody LinhaCategoriaDTO linha_categoriaDTO) {
         LOGGER.info("Recebendo Update para linha de categoria de ID: {}", id);
         LOGGER.debug("Payload: {}", linha_categoriaDTO);
 
         return this.linha_categoriaService.update(linha_categoriaDTO, id);
     }
+
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
         LOGGER.info("Recebendo Delete para linha de categoria de ID: {}", id);

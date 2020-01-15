@@ -1,12 +1,12 @@
-package br.com.hbsis.Pedidos;
+package br.com.hbsis.pedidos;
 
 import br.com.hbsis.fornecedor.Fornecedor;
+import br.com.hbsis.funcionario.Funcionario;
 import br.com.hbsis.periodoVendas.Periodo;
 import br.com.hbsis.produtos.Produtos;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "seg_pedidos")
@@ -28,16 +28,23 @@ public class Pedidos {
     @JoinColumn(name = "id_fornecedor", referencedColumnName = "id")
     private Fornecedor fornecedor;
 
-    @ManyToMany
-    @JoinTable(name = "seg_pedidos_itens", joinColumns = @JoinColumn(name = "pedido_id"), inverseJoinColumns = @JoinColumn(name = "item_id"))
-    private List<Produtos> produtos;
-
     @ManyToOne
     @JoinColumn(name = "id_periodo", referencedColumnName = "id")
     private Periodo periodo;
 
     @Column(name = "valor_total", nullable = false)
     private double valorTotal;
+
+    @ManyToOne
+    @JoinColumn(name = "id_funcionario", referencedColumnName = "id")
+    private Funcionario funcionario;
+
+    @ManyToOne
+    @JoinColumn(name = "produto_id", referencedColumnName = "id")
+    private Produtos produto;
+
+    @Column(name = "quantidade_produto", nullable = false, length = 5)
+    private Integer quantidade;
 
     public Long getId() {
         return id;
@@ -79,13 +86,6 @@ public class Pedidos {
         this.fornecedor = fornecedor;
     }
 
-    public List<Produtos> getProdutos() {
-        return produtos;
-    }
-
-    public void setProdutos(List<Produtos> produtos) {
-        this.produtos = produtos;
-    }
 
     public Periodo getPeriodo() {
         return periodo;
@@ -103,6 +103,30 @@ public class Pedidos {
         this.valorTotal = valorTotal;
     }
 
+    public Funcionario getFuncionario() {
+        return funcionario;
+    }
+
+    public void setFuncionario(Funcionario funcionario) {
+        this.funcionario = funcionario;
+    }
+
+    public Produtos getProduto() {
+        return produto;
+    }
+
+    public void setProduto(Produtos produto) {
+        this.produto = produto;
+    }
+
+    public Integer getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+    }
+
     @Override
     public String toString() {
         return "Pedidos{" +
@@ -111,7 +135,6 @@ public class Pedidos {
                 ", status=" + status +
                 ", dataCriacao=" + dataCriacao +
                 ", fornecedor=" + fornecedor +
-                ", produtos=" + produtos +
                 ", periodo=" + periodo +
                 ", valorTotal=" + valorTotal +
                 '}';

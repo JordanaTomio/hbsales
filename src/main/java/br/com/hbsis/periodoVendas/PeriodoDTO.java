@@ -1,17 +1,14 @@
 package br.com.hbsis.periodoVendas;
 
-import org.apache.tomcat.jni.Local;
-
 import java.time.LocalDate;
-import java.util.Date;
 
 public class PeriodoDTO {
-    Long id;
-    LocalDate inicioVendas;
-    LocalDate fimVendas;
-    LocalDate retiradaPedido;
-    String descricao;
-    Long idFornecedor;
+    private Long id;
+    private LocalDate inicioVendas;
+    private LocalDate fimVendas;
+    private LocalDate retiradaPedido;
+    private String descricao;
+    private Long idFornecedor;
 
     public PeriodoDTO(Long id, LocalDate inicioVendas, LocalDate fimVendas, LocalDate retiradaPedido, String descricao, Long idFornecedor) {
         this.id = id;

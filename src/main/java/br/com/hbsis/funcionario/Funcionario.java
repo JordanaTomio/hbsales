@@ -7,13 +7,13 @@ import javax.persistence.*;
 public class Funcionario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    @Column(name = "nome_funcionario", nullable = false, length = 50)
-    String nomeFuncionario;
-    @Column(name = "email_funcionario", nullable = false, length = 50)
-    String emailFuncionario;
-    @Column(name = "uuid_funcionario", nullable = false, length = 36)
-    String uuidFuncionario;
+    private Long id;
+    @Column(name = "nome", nullable = false, length = 50)
+    private String nome;
+    @Column(name = "email", nullable = false, length = 50)
+    private String email;
+    @Column(name = "uuid", nullable = false, length = 36)
+    private String uuid;
 
     public Long getId() {
         return id;
@@ -23,37 +23,37 @@ public class Funcionario {
         this.id = id;
     }
 
-    public String getNomeFuncionario() {
-        return nomeFuncionario;
+    public String getNome() {
+        return nome;
     }
 
-    public void setNomeFuncionario(String nomeFuncionario) {
-        this.nomeFuncionario = nomeFuncionario;
+    void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public String getEmailFuncionario() {
-        return emailFuncionario;
+    public String getEmail() {
+        return email;
     }
 
-    public void setEmailFuncionario(String emailFuncionario) {
-        this.emailFuncionario = emailFuncionario;
+    void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getUuidFuncionario() {
-        return uuidFuncionario;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setUuidFuncionario(String uuidFuncionario) {
-        this.uuidFuncionario = uuidFuncionario;
+    void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Override
     public String toString() {
         return "Funcionario{" +
                 "id=" + id +
-                ", nomeFuncionario='" + nomeFuncionario + '\'' +
-                ", emailFuncionario='" + emailFuncionario + '\'' +
-                ", uuidFuncionario='" + uuidFuncionario + '\'' +
+                ", nomeFuncionario='" + nome + '\'' +
+                ", emailFuncionario='" + email + '\'' +
+                ", uuidFuncionario='" + uuid + '\'' +
                 '}';
     }
 }
