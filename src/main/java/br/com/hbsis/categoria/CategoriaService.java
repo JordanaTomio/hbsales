@@ -66,7 +66,9 @@ public class CategoriaService {
 
         categoria = this.iCategoriaRepository.save(categoria);
 
-        return CategoriaDTO.of(categoria);
+        categoriaDTO.setId(categoria.getId());
+
+        return categoriaDTO;
     }
 
     private void validate(CategoriaDTO categoriaDTO) {
@@ -75,12 +77,16 @@ public class CategoriaService {
         if (categoriaDTO == null) {
             throw new IllegalArgumentException("CategoriaDTO não deve ser nulo");
         }
+        if (categoriaDTO.getIdFornecedor() == null) {
+            throw new IllegalArgumentException("Fornecedor não deve ser nulo");
+        }
         if (StringUtils.isEmpty(categoriaDTO.getNome())) {
             throw new IllegalArgumentException("Nome da categoria não deve ser nulo/vazio");
         }
         if (StringUtils.isEmpty(categoriaDTO.getIdFornecedor().toString())) {
             throw new IllegalArgumentException("Fornecedor não deve ser nulo/vazio");
         }
+
         if (StringUtils.isEmpty(categoriaDTO.getCodigo())) {
             throw new IllegalArgumentException("Codigo não deve ser nulo/vazio");
         }

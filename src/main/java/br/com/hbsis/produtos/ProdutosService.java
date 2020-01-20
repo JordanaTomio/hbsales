@@ -71,7 +71,9 @@ public class ProdutosService {
         produtos.setLinha(linhaCompleta);
         produtos = this.iProdutosRepository.save(produtos);
 
-        return ProdutosDTO.of(produtos);
+        produtosDTO.setId(produtos.getId());
+
+        return produtosDTO;
     }
 
     private void validate(ProdutosDTO produtosDTO) {
@@ -80,17 +82,33 @@ public class ProdutosService {
         if (produtosDTO == null) {
             throw new IllegalArgumentException("ProdutosDTO não deve ser nulo");
         }
-
+        if (produtosDTO.getIdLinha() == null) {
+            throw new IllegalArgumentException("Linha de categoria não deve ser nula");
+        }
         if (StringUtils.isEmpty(produtosDTO.getNome())) {
             throw new IllegalArgumentException("Nome do produto não deve ser nulo/vazio");
         }
         if (StringUtils.isEmpty(produtosDTO.getIdLinha().toString())) {
             throw new IllegalArgumentException("Linha de categoria não deve ser nula/vazia");
         }
-
+        if(produtosDTO.getUnidadeMedida() == null){
+            throw new IllegalArgumentException("Unidade de medida não deve ser nula/vazia");
+        }
         if (!(produtosDTO.getUnidadeMedida().contains("kg") || produtosDTO.getUnidadeMedida().contains("mg") || produtosDTO.getUnidadeMedida().contains("g"))) {
             throw new IllegalArgumentException("Unidade de medida inválida");
         }
+        if(produtosDTO.getValidade() == null){
+            throw new IllegalArgumentException("Validade não deve ser nula/vazia");
+        }
+        if(produtosDTO.getUnidadeCaixa() == null){
+            throw new IllegalArgumentException("Unidade por caixa não deve ser nula/vazia");
+        }
+        if (StringUtils.isEmpty(produtosDTO.getCodigo())) {
+            throw new IllegalArgumentException("Codigo não deve ser nula/vazia");
+        }
+
+
+
     }
 
     public ProdutosDTO update(ProdutosDTO produtosDTO, Long id) {

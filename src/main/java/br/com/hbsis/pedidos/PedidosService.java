@@ -138,7 +138,7 @@ public class PedidosService {
         this.validandoFornecedor(produtoCompleto, fornecedorCompleto);
     }
 
-    private void validandoAPI(InvoiceDTO invoiceDTO) {
+    public void validandoAPI(InvoiceDTO invoiceDTO) {
         RestTemplate template = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "f5a00032-1b67-11ea-978f-2e728ce88125");
@@ -147,7 +147,7 @@ public class PedidosService {
         ResponseEntity<InvoiceDTO> result = template.exchange("http://10.2.54.25:9999/api/invoice", HttpMethod.POST, entidade, InvoiceDTO.class); //out
     }
 
-    private void validandoFornecedor(Produtos produtos, Fornecedor fornecedor) {
+    public void validandoFornecedor(Produtos produtos, Fornecedor fornecedor) {
         LOGGER.info("Validando se produto pertence ao fornecedor");
         Long idFornecedor = produtos.getLinha().getCategoria().getFornecedor().getId();
         if (!idFornecedor.toString().equals(fornecedor.getId().toString())) {
@@ -337,7 +337,7 @@ public class PedidosService {
         new Pedidos();
         Pedidos pedidos;
         pedidos = this.findById(id);
-        if (pedidos.getPeriodo().getRetiradaPedido().toString().equals(LocalDate.now().plusDays(8).toString())) {
+        if (pedidos.getPeriodo().getRetiradaPedido().toString().equals(LocalDate.now().toString())) {
             if (pedidos.getStatus().equals(StatusName.ATIVO)) {
                 pedidos.setStatus(StatusName.RETIRADO);
                 this.update(PedidosDTO.of(pedidos), id);

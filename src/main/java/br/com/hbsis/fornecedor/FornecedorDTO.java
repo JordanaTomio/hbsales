@@ -42,7 +42,7 @@ public class FornecedorDTO {
         this.id = id;
     }
 
-    String getRazao() {
+    public String getRazao() {
         return razao;
     }
 
@@ -50,7 +50,7 @@ public class FornecedorDTO {
         this.razao = razao;
     }
 
-    String getCnpj() {
+    public String getCnpj() {
         return cnpj;
     }
 
@@ -58,7 +58,7 @@ public class FornecedorDTO {
         this.cnpj = cnpj;
     }
 
-    String getNomeFantasia() {
+    public String getNomeFantasia() {
         return nomeFantasia;
     }
 
@@ -66,7 +66,7 @@ public class FornecedorDTO {
         this.nomeFantasia = nomeFantasia;
     }
 
-    String getEndereco() {
+    public String getEndereco() {
         return endereco;
     }
 
@@ -74,7 +74,7 @@ public class FornecedorDTO {
         this.endereco = endereco;
     }
 
-    String getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
@@ -82,7 +82,7 @@ public class FornecedorDTO {
         this.telefone = telefone;
     }
 
-    String getEmail() {
+    public String getEmail() {
         return email;
     }
 

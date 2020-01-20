@@ -33,7 +33,7 @@ public class PeriodoService {
         periodo.setInicioVendas(periodoDTO.getInicioVendas());
         periodo.setFimVendas(periodoDTO.getFimVendas());
         periodo.setDescricao(periodoDTO.getDescricao());
-        periodo.setRetiradaPedido(periodoDTO.getFimVendas().plusDays(1));
+        periodo.setRetiradaPedido(periodoDTO.getFimVendas());
 
         new Fornecedor();
         Fornecedor fornecedorCompleto;
@@ -42,7 +42,9 @@ public class PeriodoService {
 
         periodo = this.iPeriodoRepository.save(periodo);
 
-        return PeriodoDTO.of(periodo);
+        periodoDTO.setId(periodo.getId());
+
+        return periodoDTO;
     }
 
     private List<Periodo> findAll() {
@@ -55,15 +57,20 @@ public class PeriodoService {
         if (periodoDTO == null) {
             throw new IllegalArgumentException("PeriodoDTO não deve ser nulo");
         }
-
-        if (StringUtils.isEmpty(periodoDTO.getInicioVendas().toString())) {
+        if (periodoDTO.getIdFornecedor() == null) {
+            throw new IllegalArgumentException("Fornecedor não deve ser nulo");
+        }
+        if(periodoDTO.getInicioVendas() == null){
             throw new IllegalArgumentException("Inicio das vendas não deve ser nulo/vazio");
         }
-        if (StringUtils.isEmpty(periodoDTO.getFimVendas().toString())) {
+        if(periodoDTO.getFimVendas() == null){
             throw new IllegalArgumentException("Fim das vendas não deve ser nulo/vazio");
         }
-        if (StringUtils.isEmpty(periodoDTO.getIdFornecedor().toString())) {
-            throw new IllegalArgumentException("Período de vendas deve ter um fornecedor");
+        if(periodoDTO.getRetiradaPedido() == null){
+            throw new IllegalArgumentException("Retirada das vendas não deve ser nulo/vazio");
+        }
+        if (StringUtils.isEmpty(periodoDTO.getDescricao())) {
+            throw new IllegalArgumentException("Descrição do período de vendas deve não deve ser nula");
         }
         String inicioVendas = periodoDTO.getInicioVendas().toString();
         String fimVendas = periodoDTO.getFimVendas().toString();

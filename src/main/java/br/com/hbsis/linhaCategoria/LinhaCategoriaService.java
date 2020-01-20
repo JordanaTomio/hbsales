@@ -33,23 +33,23 @@ public class LinhaCategoriaService {
         this.categoriaService = categoriaService;
     }
 
-    public LinhaCategoriaDTO save(LinhaCategoriaDTO linha_categoriaDTO) {
+    public LinhaCategoriaDTO save(LinhaCategoriaDTO linhaCategoriaDTO) {
 
-        this.validate(linha_categoriaDTO);
+        this.validate(linhaCategoriaDTO);
 
         LOGGER.info("Salvando linha da categoria");
-        LOGGER.debug("Linha da categoria: {}", linha_categoriaDTO);
+        LOGGER.debug("Linha da categoria: {}", linhaCategoriaDTO);
 
         LinhaCategoria linha = new LinhaCategoria();
-        linha.setId(linha_categoriaDTO.getId());
-        linha.setCodigoLinha(linha_categoriaDTO.getCodigoLinha());
-        linha.setNomeLinha(linha_categoriaDTO.getNomeLinha());
+        linha.setId(linhaCategoriaDTO.getId());
+        linha.setCodigoLinha(linhaCategoriaDTO.getCodigoLinha());
+        linha.setNomeLinha(linhaCategoriaDTO.getNomeLinha());
 
-        int zero = linha_categoriaDTO.getCodigoLinha().length();
+        int zero = linhaCategoriaDTO.getCodigoLinha().length();
         String codigoZero;
 
         if (zero < 10) {
-            String x = linha_categoriaDTO.getCodigoLinha();
+            String x = linhaCategoriaDTO.getCodigoLinha();
             codigoZero = StringUtils.leftPad(x, 10, "0");
             String codigo = codigoZero.toUpperCase();
             linha.setCodigoLinha(codigo);
@@ -57,25 +57,35 @@ public class LinhaCategoriaService {
 
         new Categoria();
         Categoria categoriaCompleta;
-        categoriaCompleta = categoriaService.findByIdCategoria(linha_categoriaDTO.getCategoria());
+        categoriaCompleta = categoriaService.findByIdCategoria(linhaCategoriaDTO.getCategoria());
         linha.setCategoria(categoriaCompleta);
+
         linha = this.iLinhaCategoriaRepository.save(linha);
 
-        return LinhaCategoriaDTO.of(linha);
+        linhaCategoriaDTO.setId(linha.getId());
+
+        return linhaCategoriaDTO;
     }
 
-    private void validate(LinhaCategoriaDTO linha_categoriaDTO) {
+    private void validate(LinhaCategoriaDTO linhaCategoriaDTO) {
         LOGGER.info("Validando linha da categoria");
 
-        if (linha_categoriaDTO == null) {
+        if (linhaCategoriaDTO == null) {
             throw new IllegalArgumentException("LinhaCategoriaDTO não deve ser nulo");
         }
-        if (StringUtils.isEmpty(linha_categoriaDTO.getNomeLinha())) {
+        if (linhaCategoriaDTO.getCategoria() == null) {
+            throw new IllegalArgumentException("Categoria não deve ser nulo");
+        }
+        if (StringUtils.isEmpty(linhaCategoriaDTO.getNomeLinha())) {
             throw new IllegalArgumentException("Nome da linha não deve ser nulo/vazio");
         }
-        if (StringUtils.isEmpty(linha_categoriaDTO.getCategoria().toString())) {
+        if (StringUtils.isEmpty(linhaCategoriaDTO.getCategoria().toString())) {
             throw new IllegalArgumentException("Categoria da linha não deve ser nula/vazia");
         }
+        if (StringUtils.isEmpty(linhaCategoriaDTO.getCodigoLinha())) {
+            throw new IllegalArgumentException("Codigo da linha não deve ser nula/vazia");
+        }
+
     }
 
     public LinhaCategoria findByIdLinha(Long id) {

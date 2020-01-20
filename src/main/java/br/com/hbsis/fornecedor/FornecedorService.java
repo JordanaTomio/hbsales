@@ -62,6 +62,12 @@ public class FornecedorService {
         if (StringUtils.isEmpty(fornecedorDTO.getEndereco())) {
             throw new IllegalArgumentException("Endereco não deve ser nulo/vazio");
         }
+        if (StringUtils.isEmpty(fornecedorDTO.getTelefone())) {
+            throw new IllegalArgumentException("Telefone não deve ser nulo/vazio");
+        }
+        if (StringUtils.isEmpty(fornecedorDTO.getEmail())) {
+            throw new IllegalArgumentException("Email não deve ser nulo/vazio");
+        }
 
         Pattern pattern = Pattern.compile("[^A-Za-z0-9]");
         Matcher matcher = pattern.matcher(fornecedorDTO.getTelefone());
