@@ -42,7 +42,7 @@ public class CategoriaDTO {
         this.nome = nome;
     }
 
-    Long getIdFornecedor() {
+    public Long getIdFornecedor() {
         return idFornecedor;
     }
 

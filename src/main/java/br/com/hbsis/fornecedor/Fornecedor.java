@@ -34,7 +34,7 @@ public class Fornecedor {
         return razao;
     }
 
-    void setRazao(String razao) {
+    public void setRazao(String razao) {
         this.razao = razao;
     }
 
@@ -42,39 +42,39 @@ public class Fornecedor {
         return cnpj;
     }
 
-    void setCnpj(String cnpj) {
+    public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
     }
 
-    String getNomeFantasia() {
+    public String getNomeFantasia() {
         return nomeFantasia;
     }
 
-    void setNomeFantasia(String nomeFantasia) {
+    public void setNomeFantasia(String nomeFantasia) {
         this.nomeFantasia = nomeFantasia;
     }
 
-    String getEndereco() {
+    public String getEndereco() {
         return endereco;
     }
 
-    void setEndereco(String endereco) {
+    public void setEndereco(String endereco) {
         this.endereco = endereco;
     }
 
-    String getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    void setTelefone(String telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
-    String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    void setEmail(String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 

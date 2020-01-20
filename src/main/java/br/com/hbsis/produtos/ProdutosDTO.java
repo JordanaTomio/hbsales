@@ -28,6 +28,7 @@ public class ProdutosDTO {
     public ProdutosDTO() {
     }
 
+
     public static ProdutosDTO of(Produtos produtos) {
         return new ProdutosDTO(
                 produtos.getId(),
